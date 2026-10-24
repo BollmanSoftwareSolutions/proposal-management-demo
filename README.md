@@ -1,1 +1,1 @@
-# proposal-management-demo
+# Portfolio Demo - Vendor Proposal Management
