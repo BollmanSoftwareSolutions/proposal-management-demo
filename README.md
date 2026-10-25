@@ -62,7 +62,47 @@ Each **Vendor** is its own business. It will only have access to its own data su
 
 # Workflow
 ## Overview
-TODO: Process flowchart/Mermaid Diagram
+The diagram below shows the end-to-end process across all three roles, from system
+and project setup through the vendor proposal lifecycle to legal handoff. See the
+[Workflows design doc](design-docs/03-workflows.md) for the detailed per-role flows
+and the proposal state machine.
+
+```mermaid
+flowchart TD
+    Start([Start]) --> Setup
+
+    subgraph Setup["System & Project Setup"]
+        L1[Lead: create Project Areas] --> L2[Lead: create shared Artifacts]
+        L2 --> O1[Officer: create Project]
+        O1 --> O2[Officer: add standard + specific Artifacts]
+        O2 --> O3[Officer: add Project Segments]
+        O3 --> O4[Officer: activate project - public]
+        O4 --> O5[Officer: send Vendor solicitations]
+    end
+
+    O5 --> Prop
+
+    subgraph Prop["Proposal Process"]
+        V1[Vendor: view available Projects] --> V2{Sign up?}
+        V2 -- No --> NI[Move to Not Interested]
+        V2 -- Yes --> V3[Vendor: sign up]
+        V3 --> V4[Vendor: optional additional docs]
+        V4 --> V5[Vendor: complete required Artifacts]
+        V5 --> F1[Officer: review + filter at solicitation close]
+        F1 --> AP1{Lead approves 1st round?}
+        AP1 -- Declined --> End1([Vendor process ends])
+        AP1 -- Approved --> V6[Vendor: complete follow-up Artifacts]
+        V6 --> F2[Officer: review follow-up + rank finalists]
+        F2 --> AP2{Lead approves finals?}
+        AP2 -- Declined --> End2([Vendor process ends])
+        AP2 -- Approved --> Legal[Send top Vendor to Legal]
+    end
+
+    Legal --> Done([Contract drafting - out of scope])
+    NI --> Reconsider{Reconsider later?}
+    Reconsider -- Yes --> V1
+    Reconsider -- No --> Done
+```
 
 ## System Setup - Procurement Lead
 1. Create Project Areas (Ex. Facilities Maintenance)

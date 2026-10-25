@@ -13,7 +13,11 @@ The Frontend is built with React and TypeScript. Routing and API requests use th
 
 The UI follows a Container-Presentational pattern.
 
-SurveyJS is used to build form artifacts.
+SurveyJS schema and responses are used for form artifacts. The SurveyJS
+Creator/Designer is **not** used; a basic MUI-based survey builder provides
+authoring for a limited set of question types (text, radio, checkbox, select),
+and the SurveyJS runtime renders forms for preview and completion. See
+[UI/UX §6](./04-ui-ux.md#6-form-artifacts--survey-builder--runtime).
 
 ### Tech list
 - Vite
@@ -204,6 +208,3 @@ User may reconsider if they wish to sign up.
 #### Shared Artifacts
 List of the shared artifacts that are on Projects.
 Can provide submissions that will get applied to any Projects they sign up for.
-
-
-npm create vite@latest proposal-management-demo -- --template react-ts
