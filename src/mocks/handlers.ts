@@ -45,6 +45,28 @@ const OPERATIONS: Record<string, OperationDef> = {
     field: 'artifactTemplates',
     resolve: (id) => queries.artifactTemplates(id),
   },
+  AllProposals: {
+    field: 'allProposals',
+    resolve: (id) => queries.allProposals(id),
+  },
+  ProjectProposals: {
+    field: 'projectProposals',
+    resolve: (id, v) => queries.projectProposals(id, v.projectId as string),
+  },
+  ProjectSolicitations: {
+    field: 'projectSolicitations',
+    resolve: (id, v) =>
+      queries.projectSolicitations(id, v.projectId as string),
+  },
+  ProjectFinalists: {
+    field: 'projectFinalists',
+    resolve: (id, v) => queries.projectFinalists(id, v.projectId as string),
+  },
+  ProjectNotInterestedVendors: {
+    field: 'projectNotInterestedVendors',
+    resolve: (id, v) =>
+      queries.projectNotInterestedVendors(id, v.projectId as string),
+  },
   MyProposals: {
     field: 'myProposals',
     resolve: (id) => queries.myProposals(id),

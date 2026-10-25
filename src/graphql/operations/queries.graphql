@@ -72,6 +72,36 @@ query ArtifactTemplates {
   }
 }
 
+query AllProposals {
+  allProposals {
+    ...ProposalFields
+  }
+}
+
+query ProjectProposals($projectId: ID!) {
+  projectProposals(projectId: $projectId) {
+    ...ProposalFields
+  }
+}
+
+query ProjectSolicitations($projectId: ID!) {
+  projectSolicitations(projectId: $projectId) {
+    ...SolicitationFields
+  }
+}
+
+query ProjectFinalists($projectId: ID!) {
+  projectFinalists(projectId: $projectId) {
+    ...FinalistFields
+  }
+}
+
+query ProjectNotInterestedVendors($projectId: ID!) {
+  projectNotInterestedVendors(projectId: $projectId) {
+    ...UserFields
+  }
+}
+
 query MyProposals {
   myProposals {
     ...ProposalFields

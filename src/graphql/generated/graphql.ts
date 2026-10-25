@@ -87,7 +87,11 @@ export type ProjectFieldsFragment = { id: string, projectAreaId: string, name: s
 
 export type SubmissionFieldsFragment = { id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string };
 
-export type ProposalFieldsFragment = { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> };
+export type ProposalFieldsFragment = { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> };
+
+export type FinalistFieldsFragment = { id: string, projectId: string, vendorId: string, rank: number, status: FinalistStatus, vendor: { id: string, name: string, companyName: string | null } | null };
+
+export type SolicitationFieldsFragment = { id: string, projectId: string, vendorId: string, invitedAt: string };
 
 export type CreateProjectMutationVariables = Exact<{
   input: CreateProjectInput;
@@ -139,7 +143,7 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 
-export type SignUpMutation = { signUp: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
+export type SignUpMutation = { signUp: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
 
 export type MarkNotInterestedMutationVariables = Exact<{
   projectId: string;
@@ -167,7 +171,7 @@ export type SubmitProposalMutationVariables = Exact<{
 }>;
 
 
-export type SubmitProposalMutation = { submitProposal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
+export type SubmitProposalMutation = { submitProposal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
 
 export type FilterProposalMutationVariables = Exact<{
   proposalId: string;
@@ -175,7 +179,7 @@ export type FilterProposalMutationVariables = Exact<{
 }>;
 
 
-export type FilterProposalMutation = { filterProposal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
+export type FilterProposalMutation = { filterProposal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
 
 export type ApproveRoundMutationVariables = Exact<{
   proposalId: string;
@@ -183,7 +187,7 @@ export type ApproveRoundMutationVariables = Exact<{
 }>;
 
 
-export type ApproveRoundMutation = { approveRound: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
+export type ApproveRoundMutation = { approveRound: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
 
 export type RankFinalistMutationVariables = Exact<{
   projectId: string;
@@ -200,7 +204,7 @@ export type ApproveFinalMutationVariables = Exact<{
 }>;
 
 
-export type ApproveFinalMutation = { approveFinal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
+export type ApproveFinalMutation = { approveFinal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
 
 export type DashboardQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -243,10 +247,43 @@ export type ArtifactTemplatesQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ArtifactTemplatesQuery = { artifactTemplates: Array<{ id: string, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, shared: boolean }> };
 
+export type AllProposalsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type AllProposalsQuery = { allProposals: Array<{ id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> }> };
+
+export type ProjectProposalsQueryVariables = Exact<{
+  projectId: string;
+}>;
+
+
+export type ProjectProposalsQuery = { projectProposals: Array<{ id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> }> };
+
+export type ProjectSolicitationsQueryVariables = Exact<{
+  projectId: string;
+}>;
+
+
+export type ProjectSolicitationsQuery = { projectSolicitations: Array<{ id: string, projectId: string, vendorId: string, invitedAt: string }> };
+
+export type ProjectFinalistsQueryVariables = Exact<{
+  projectId: string;
+}>;
+
+
+export type ProjectFinalistsQuery = { projectFinalists: Array<{ id: string, projectId: string, vendorId: string, rank: number, status: FinalistStatus, vendor: { id: string, name: string, companyName: string | null } | null }> };
+
+export type ProjectNotInterestedVendorsQueryVariables = Exact<{
+  projectId: string;
+}>;
+
+
+export type ProjectNotInterestedVendorsQuery = { projectNotInterestedVendors: Array<{ id: string, name: string, email: string, phone: string, roles: Array<Role>, companyName: string | null, jurisdiction: string | null, lastActive: string }> };
+
 export type MyProposalsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyProposalsQuery = { myProposals: Array<{ id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> }> };
+export type MyProposalsQuery = { myProposals: Array<{ id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> }> };
 
 export type AvailableProjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -389,6 +426,8 @@ export const ProposalFieldsFragmentDoc = new TypedDocumentString(`
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -409,6 +448,28 @@ export const ProposalFieldsFragmentDoc = new TypedDocumentString(`
   documentName
   submittedAt
 }`, {"fragmentName":"ProposalFields"});
+export const FinalistFieldsFragmentDoc = new TypedDocumentString(`
+    fragment FinalistFields on Finalist {
+  id
+  projectId
+  vendorId
+  rank
+  status
+  vendor {
+    id
+    name
+    companyName
+  }
+}
+    `, {"fragmentName":"FinalistFields"});
+export const SolicitationFieldsFragmentDoc = new TypedDocumentString(`
+    fragment SolicitationFields on Solicitation {
+  id
+  projectId
+  vendorId
+  invitedAt
+}
+    `, {"fragmentName":"SolicitationFields"});
 export const CreateProjectDocument = new TypedDocumentString(`
     mutation CreateProject($input: CreateProjectInput!) {
   createProject(input: $input) {
@@ -751,6 +812,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -885,6 +948,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -943,6 +1008,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -1001,6 +1068,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -1087,6 +1156,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -1466,6 +1537,248 @@ useArtifactTemplatesQuery.getKey = (variables?: ArtifactTemplatesQueryVariables)
 
 useArtifactTemplatesQuery.fetcher = (variables?: ArtifactTemplatesQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<ArtifactTemplatesQuery, ArtifactTemplatesQueryVariables>(ArtifactTemplatesDocument, variables, options);
 
+export const AllProposalsDocument = new TypedDocumentString(`
+    query AllProposals {
+  allProposals {
+    ...ProposalFields
+  }
+}
+    fragment SubmissionFields on ArtifactSubmission {
+  id
+  proposalId
+  projectArtifactId
+  type
+  surveyJsResponses
+  documentName
+  submittedAt
+}
+fragment ProposalFields on Proposal {
+  id
+  projectId
+  vendorId
+  status
+  signedUpAt
+  vendor {
+    id
+    name
+    companyName
+  }
+  project {
+    id
+    name
+    status
+    estimatedValue
+    closeDate
+  }
+  submissions {
+    ...SubmissionFields
+  }
+  additionalItems {
+    id
+    proposalId
+    name
+    note
+  }
+}`);
+
+export const useAllProposalsQuery = <
+      TData = AllProposalsQuery,
+      TError = unknown
+    >(
+      variables?: AllProposalsQueryVariables,
+      options?: Omit<UseQueryOptions<AllProposalsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<AllProposalsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<AllProposalsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['AllProposals'] : ['AllProposals', variables],
+    queryFn: fetchGraphQL<AllProposalsQuery, AllProposalsQueryVariables>(AllProposalsDocument, variables),
+    ...options
+  }
+    )};
+
+useAllProposalsQuery.getKey = (variables?: AllProposalsQueryVariables) => variables === undefined ? ['AllProposals'] : ['AllProposals', variables];
+
+
+useAllProposalsQuery.fetcher = (variables?: AllProposalsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<AllProposalsQuery, AllProposalsQueryVariables>(AllProposalsDocument, variables, options);
+
+export const ProjectProposalsDocument = new TypedDocumentString(`
+    query ProjectProposals($projectId: ID!) {
+  projectProposals(projectId: $projectId) {
+    ...ProposalFields
+  }
+}
+    fragment SubmissionFields on ArtifactSubmission {
+  id
+  proposalId
+  projectArtifactId
+  type
+  surveyJsResponses
+  documentName
+  submittedAt
+}
+fragment ProposalFields on Proposal {
+  id
+  projectId
+  vendorId
+  status
+  signedUpAt
+  vendor {
+    id
+    name
+    companyName
+  }
+  project {
+    id
+    name
+    status
+    estimatedValue
+    closeDate
+  }
+  submissions {
+    ...SubmissionFields
+  }
+  additionalItems {
+    id
+    proposalId
+    name
+    note
+  }
+}`);
+
+export const useProjectProposalsQuery = <
+      TData = ProjectProposalsQuery,
+      TError = unknown
+    >(
+      variables: ProjectProposalsQueryVariables,
+      options?: Omit<UseQueryOptions<ProjectProposalsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<ProjectProposalsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<ProjectProposalsQuery, TError, TData>(
+      {
+    queryKey: ['ProjectProposals', variables],
+    queryFn: fetchGraphQL<ProjectProposalsQuery, ProjectProposalsQueryVariables>(ProjectProposalsDocument, variables),
+    ...options
+  }
+    )};
+
+useProjectProposalsQuery.getKey = (variables: ProjectProposalsQueryVariables) => ['ProjectProposals', variables];
+
+
+useProjectProposalsQuery.fetcher = (variables: ProjectProposalsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<ProjectProposalsQuery, ProjectProposalsQueryVariables>(ProjectProposalsDocument, variables, options);
+
+export const ProjectSolicitationsDocument = new TypedDocumentString(`
+    query ProjectSolicitations($projectId: ID!) {
+  projectSolicitations(projectId: $projectId) {
+    ...SolicitationFields
+  }
+}
+    fragment SolicitationFields on Solicitation {
+  id
+  projectId
+  vendorId
+  invitedAt
+}`);
+
+export const useProjectSolicitationsQuery = <
+      TData = ProjectSolicitationsQuery,
+      TError = unknown
+    >(
+      variables: ProjectSolicitationsQueryVariables,
+      options?: Omit<UseQueryOptions<ProjectSolicitationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<ProjectSolicitationsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<ProjectSolicitationsQuery, TError, TData>(
+      {
+    queryKey: ['ProjectSolicitations', variables],
+    queryFn: fetchGraphQL<ProjectSolicitationsQuery, ProjectSolicitationsQueryVariables>(ProjectSolicitationsDocument, variables),
+    ...options
+  }
+    )};
+
+useProjectSolicitationsQuery.getKey = (variables: ProjectSolicitationsQueryVariables) => ['ProjectSolicitations', variables];
+
+
+useProjectSolicitationsQuery.fetcher = (variables: ProjectSolicitationsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<ProjectSolicitationsQuery, ProjectSolicitationsQueryVariables>(ProjectSolicitationsDocument, variables, options);
+
+export const ProjectFinalistsDocument = new TypedDocumentString(`
+    query ProjectFinalists($projectId: ID!) {
+  projectFinalists(projectId: $projectId) {
+    ...FinalistFields
+  }
+}
+    fragment FinalistFields on Finalist {
+  id
+  projectId
+  vendorId
+  rank
+  status
+  vendor {
+    id
+    name
+    companyName
+  }
+}`);
+
+export const useProjectFinalistsQuery = <
+      TData = ProjectFinalistsQuery,
+      TError = unknown
+    >(
+      variables: ProjectFinalistsQueryVariables,
+      options?: Omit<UseQueryOptions<ProjectFinalistsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<ProjectFinalistsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<ProjectFinalistsQuery, TError, TData>(
+      {
+    queryKey: ['ProjectFinalists', variables],
+    queryFn: fetchGraphQL<ProjectFinalistsQuery, ProjectFinalistsQueryVariables>(ProjectFinalistsDocument, variables),
+    ...options
+  }
+    )};
+
+useProjectFinalistsQuery.getKey = (variables: ProjectFinalistsQueryVariables) => ['ProjectFinalists', variables];
+
+
+useProjectFinalistsQuery.fetcher = (variables: ProjectFinalistsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<ProjectFinalistsQuery, ProjectFinalistsQueryVariables>(ProjectFinalistsDocument, variables, options);
+
+export const ProjectNotInterestedVendorsDocument = new TypedDocumentString(`
+    query ProjectNotInterestedVendors($projectId: ID!) {
+  projectNotInterestedVendors(projectId: $projectId) {
+    ...UserFields
+  }
+}
+    fragment UserFields on User {
+  id
+  name
+  email
+  phone
+  roles
+  companyName
+  jurisdiction
+  lastActive
+}`);
+
+export const useProjectNotInterestedVendorsQuery = <
+      TData = ProjectNotInterestedVendorsQuery,
+      TError = unknown
+    >(
+      variables: ProjectNotInterestedVendorsQueryVariables,
+      options?: Omit<UseQueryOptions<ProjectNotInterestedVendorsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<ProjectNotInterestedVendorsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<ProjectNotInterestedVendorsQuery, TError, TData>(
+      {
+    queryKey: ['ProjectNotInterestedVendors', variables],
+    queryFn: fetchGraphQL<ProjectNotInterestedVendorsQuery, ProjectNotInterestedVendorsQueryVariables>(ProjectNotInterestedVendorsDocument, variables),
+    ...options
+  }
+    )};
+
+useProjectNotInterestedVendorsQuery.getKey = (variables: ProjectNotInterestedVendorsQueryVariables) => ['ProjectNotInterestedVendors', variables];
+
+
+useProjectNotInterestedVendorsQuery.fetcher = (variables: ProjectNotInterestedVendorsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<ProjectNotInterestedVendorsQuery, ProjectNotInterestedVendorsQueryVariables>(ProjectNotInterestedVendorsDocument, variables, options);
+
 export const MyProposalsDocument = new TypedDocumentString(`
     query MyProposals {
   myProposals {
@@ -1496,6 +1809,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields

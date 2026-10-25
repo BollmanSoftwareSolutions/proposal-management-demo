@@ -223,6 +223,11 @@ type Query {
   vendors: [User!]!
   vendor(id: ID!): User
   artifactTemplates: [ArtifactTemplate!]!
+  allProposals: [Proposal!]!
+  projectProposals(projectId: ID!): [Proposal!]!
+  projectSolicitations(projectId: ID!): [Solicitation!]!
+  projectFinalists(projectId: ID!): [Finalist!]!
+  projectNotInterestedVendors(projectId: ID!): [User!]!
   myProposals: [Proposal!]!
   availableProjects: [Project!]!
   notInterestedProjects: [Project!]!

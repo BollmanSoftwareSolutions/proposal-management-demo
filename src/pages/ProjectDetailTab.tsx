@@ -1,5 +1,10 @@
 import { useParams } from '@tanstack/react-router'
 import { PagePlaceholder } from '../components/common/PagePlaceholder'
+import { useRole } from '../roles/roleContext'
+import { SetupTab } from '../features/procurement/SetupTab'
+import { ArtifactsTab } from '../features/procurement/ArtifactsTab'
+import { VendorsTab } from '../features/procurement/VendorsTab'
+import { FinalistsTab } from '../features/procurement/FinalistsTab'
 
 const TAB_COPY: Record<string, { title: string; description: string }> = {
   setup: {
@@ -25,12 +30,33 @@ const TAB_COPY: Record<string, { title: string; description: string }> = {
 }
 
 /**
- * Nested tab content for the project detail page. Phase 2 renders placeholders;
- * the procurement behaviour arrives in Phase 3 and the vendor behaviour in
- * Phase 4.
+ * Nested tab content for the project detail page. Procurement (Lead/Officer)
+ * sees the Phase 3 feature content; the vendor view arrives in Phase 4.
  */
 export function ProjectDetailTab() {
-  const { tab } = useParams({ from: '/projects/$projectId/$tab' })
+  const { projectId, tab } = useParams({ from: '/projects/$projectId/$tab' })
+  const { hasRole } = useRole()
+
+  if (!hasRole('Vendor')) {
+    switch (tab) {
+      case 'setup':
+        return <SetupTab projectId={projectId} />
+      case 'artifacts':
+        return <ArtifactsTab projectId={projectId} />
+      case 'vendors':
+        return <VendorsTab projectId={projectId} />
+      case 'finalists':
+        return <FinalistsTab projectId={projectId} />
+      default:
+        return (
+          <PagePlaceholder
+            title="Not found"
+            description="Unknown project tab."
+          />
+        )
+    }
+  }
+
   const copy = TAB_COPY[tab] ?? {
     title: 'Not found',
     description: 'Unknown project tab.',
@@ -39,7 +65,7 @@ export function ProjectDetailTab() {
     <PagePlaceholder
       title={copy.title}
       description={copy.description}
-      note="This tab is populated in Phases 3 and 4."
+      note="The vendor view of this tab arrives in Phase 4."
     />
   )
 }

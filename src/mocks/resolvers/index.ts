@@ -312,6 +312,13 @@ export function rankFinalist(
     } as Finalist
     store.finalists.push(finalist)
   }
+  // Ranking a vendor advances their proposal into the Finalized state.
+  const proposal = store.proposals.find(
+    (p) => p.projectId === projectId && p.vendorId === vendorId,
+  )
+  if (proposal && proposal.status === 'FollowUp') {
+    proposal.status = 'Finalized'
+  }
   return finalistDTO(finalist)
 }
 
@@ -323,5 +330,12 @@ export function approveFinal(
   requireLead(identity)
   const proposal = findProposal(proposalId)
   proposal.status = approve ? 'Won' : 'Declined'
+  // Keep the finalist record's status in sync with the decision.
+  const finalist = getStore().finalists.find(
+    (f) => f.projectId === proposal.projectId && f.vendorId === proposal.vendorId,
+  )
+  if (finalist) {
+    finalist.status = approve ? 'SentToLegal' : 'Declined'
+  }
   return proposalDTO(proposal)
 }

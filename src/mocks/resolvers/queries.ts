@@ -6,7 +6,7 @@ import {
   requireVendor,
 } from './access'
 import { computeDashboard } from './dashboard'
-import { projectDTO, proposalDTO } from './relations'
+import { finalistDTO, projectDTO, proposalDTO } from './relations'
 
 interface ProjectFilter {
   status?: ProjectStatus | null
@@ -66,6 +66,45 @@ export function vendor(identity: User, id: string) {
 export function artifactTemplates(identity: User) {
   requireProcurement(identity)
   return getStore().artifactTemplates
+}
+
+export function allProposals(identity: User) {
+  requireProcurement(identity)
+  return getStore().proposals.map(proposalDTO)
+}
+
+export function projectProposals(identity: User, projectId: string) {
+  requireProcurement(identity)
+  return getStore()
+    .proposals.filter((p) => p.projectId === projectId)
+    .map(proposalDTO)
+}
+
+export function projectSolicitations(identity: User, projectId: string) {
+  requireProcurement(identity)
+  return getStore().solicitations.filter((s) => s.projectId === projectId)
+}
+
+export function projectFinalists(identity: User, projectId: string) {
+  requireProcurement(identity)
+  return getStore()
+    .finalists.filter((f) => f.projectId === projectId)
+    .sort((a, b) => a.rank - b.rank)
+    .map(finalistDTO)
+}
+
+export function projectNotInterestedVendors(
+  identity: User,
+  projectId: string,
+) {
+  requireProcurement(identity)
+  const store = getStore()
+  const vendorIds = new Set(
+    store.notInterested
+      .filter((n) => n.projectId === projectId)
+      .map((n) => n.vendorId),
+  )
+  return store.users.filter((u) => vendorIds.has(u.id))
 }
 
 export function myProposals(identity: User) {
