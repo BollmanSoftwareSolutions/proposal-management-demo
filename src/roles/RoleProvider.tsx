@@ -1,4 +1,5 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { setCurrentUserId } from '../graphql/identity'
 import {
   RoleContext,
   SEED_IDENTITIES,
@@ -17,6 +18,10 @@ export function RoleProvider({
   const [identityId, setIdentityId] = useState<string>(
     initialIdentityId ?? SEED_IDENTITIES[0].id,
   )
+
+  useEffect(() => {
+    setCurrentUserId(identityId)
+  }, [identityId])
 
   const value = useMemo<RoleContextValue>(() => {
     const identity: Identity =
