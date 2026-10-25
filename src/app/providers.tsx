@@ -17,14 +17,22 @@ function createQueryClient() {
   })
 }
 
-export function AppProviders({ children }: { children: ReactNode }) {
+export function AppProviders({
+  children,
+  initialIdentityId,
+}: {
+  children: ReactNode
+  initialIdentityId?: string
+}) {
   const [queryClient] = useState(createQueryClient)
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <RoleProvider>{children}</RoleProvider>
+        <RoleProvider initialIdentityId={initialIdentityId}>
+          {children}
+        </RoleProvider>
       </ThemeProvider>
     </QueryClientProvider>
   )
