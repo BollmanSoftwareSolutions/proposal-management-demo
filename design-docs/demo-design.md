@@ -204,3 +204,6 @@ User may reconsider if they wish to sign up.
 #### Shared Artifacts
 List of the shared artifacts that are on Projects.
 Can provide submissions that will get applied to any Projects they sign up for.
+
+
+npm create vite@latest proposal-management-demo -- --template react-ts
