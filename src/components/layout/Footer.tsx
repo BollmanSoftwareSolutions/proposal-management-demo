@@ -1,14 +1,14 @@
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
+import { Link as RouterLink } from '@tanstack/react-router'
 
-const links = [
+const externalLinks = [
   { label: 'Bollman Software', href: 'https://bollmansoftware.com' },
   {
     label: 'GitHub repo',
     href: 'https://github.com/BollmanSoftwareSolutions/proposal-management-demo',
   },
-  { label: 'About this demo', href: '/about' },
 ]
 
 export function Footer() {
@@ -30,10 +30,12 @@ export function Footer() {
       <Typography variant="body2" color="text.secondary">
         © {new Date().getFullYear()} Bollman Software Solutions
       </Typography>
-      {links.map((l) => (
+      {externalLinks.map((l) => (
         <Link
           key={l.label}
           href={l.href}
+          target="_blank"
+          rel="noopener"
           variant="body2"
           color="text.secondary"
           underline="hover"
@@ -41,6 +43,15 @@ export function Footer() {
           {l.label}
         </Link>
       ))}
+      <Link
+        component={RouterLink}
+        to="/about"
+        variant="body2"
+        color="text.secondary"
+        underline="hover"
+      >
+        About this demo
+      </Link>
     </Box>
   )
 }
