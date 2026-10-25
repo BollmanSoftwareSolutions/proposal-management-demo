@@ -1,0 +1,249 @@
+scalar JSON
+
+enum Role {
+  Lead
+  Officer
+  Vendor
+}
+
+enum ProjectStatus {
+  Draft
+  Active
+  InLegal
+  Closed
+}
+
+enum ArtifactType {
+  Form
+  Document
+}
+
+enum ProposalStatus {
+  SignedUp
+  Submitted
+  Filtered
+  Declined
+  FollowUp
+  Finalized
+  Won
+}
+
+enum FinalistStatus {
+  Waiting
+  SentToLegal
+  Declined
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  phone: String!
+  roles: [Role!]!
+  companyName: String
+  jurisdiction: String
+  lastActive: String!
+}
+
+type ProjectArea {
+  id: ID!
+  name: String!
+}
+
+type ProjectSegment {
+  id: ID!
+  projectId: ID!
+  title: String!
+  order: Int!
+  openDate: String!
+  closeDate: String!
+}
+
+type ArtifactTemplate {
+  id: ID!
+  title: String!
+  description: String!
+  type: ArtifactType!
+  surveyJsSchema: JSON
+  shared: Boolean!
+}
+
+type ProjectArtifact {
+  id: ID!
+  projectId: ID!
+  templateId: ID
+  title: String!
+  description: String!
+  type: ArtifactType!
+  surveyJsSchema: JSON
+  isActive: Boolean!
+}
+
+type Project {
+  id: ID!
+  projectAreaId: ID!
+  area: ProjectArea
+  name: String!
+  estimatedValue: Float!
+  outline: String!
+  scope: String!
+  openDate: String!
+  closeDate: String!
+  assignedLeadId: ID!
+  assignedLead: User
+  officerId: ID!
+  officer: User
+  status: ProjectStatus!
+  isPublic: Boolean!
+  segments: [ProjectSegment!]!
+  artifacts: [ProjectArtifact!]!
+}
+
+type Solicitation {
+  id: ID!
+  projectId: ID!
+  vendorId: ID!
+  invitedAt: String!
+}
+
+type AdditionalItem {
+  id: ID!
+  proposalId: ID!
+  name: String!
+  note: String!
+}
+
+type ArtifactSubmission {
+  id: ID!
+  proposalId: ID!
+  projectArtifactId: ID!
+  type: ArtifactType!
+  surveyJsResponses: JSON
+  documentName: String
+  submittedAt: String!
+}
+
+type Proposal {
+  id: ID!
+  projectId: ID!
+  project: Project
+  vendorId: ID!
+  vendor: User
+  status: ProposalStatus!
+  signedUpAt: String!
+  submissions: [ArtifactSubmission!]!
+  additionalItems: [AdditionalItem!]!
+}
+
+type Finalist {
+  id: ID!
+  projectId: ID!
+  vendorId: ID!
+  vendor: User
+  rank: Int!
+  status: FinalistStatus!
+}
+
+type TopVendorMetric {
+  vendorId: ID!
+  vendorName: String!
+  value: Float!
+}
+
+type SegmentShareMetric {
+  segmentTitle: String!
+  count: Int!
+}
+
+type MonthValueMetric {
+  month: String!
+  value: Float!
+}
+
+type DashboardMetrics {
+  activeProjects: Int!
+  activeEstimatedValue: Float!
+  activeVendors: Int!
+  projectsInLegal: Int!
+  projectsByActiveSegment: [SegmentShareMetric!]!
+  topVendorsByProjectCount: [TopVendorMetric!]!
+  topVendorsByEstimatedTotal: [TopVendorMetric!]!
+  topOfficersByEstimatedTotal: [TopVendorMetric!]!
+  estimatedValueClosingByMonth: [MonthValueMetric!]!
+}
+
+input ProjectFilter {
+  status: ProjectStatus
+  projectAreaId: ID
+}
+
+input CreateProjectInput {
+  name: String!
+  projectAreaId: ID!
+  estimatedValue: Float!
+  outline: String!
+  scope: String!
+  openDate: String!
+  closeDate: String!
+  assignedLeadId: ID!
+}
+
+input UpdateProjectInput {
+  name: String
+  projectAreaId: ID
+  estimatedValue: Float
+  outline: String
+  scope: String
+  openDate: String
+  closeDate: String
+  assignedLeadId: ID
+}
+
+input ArtifactInput {
+  templateId: ID
+  title: String!
+  description: String!
+  type: ArtifactType!
+  surveyJsSchema: JSON
+}
+
+input SubmissionInput {
+  proposalId: ID!
+  projectArtifactId: ID!
+  type: ArtifactType!
+  surveyJsResponses: JSON
+  documentName: String
+}
+
+type Query {
+  dashboard: DashboardMetrics!
+  projects(filter: ProjectFilter): [Project!]!
+  project(id: ID!): Project
+  projectAreas: [ProjectArea!]!
+  vendors: [User!]!
+  vendor(id: ID!): User
+  artifactTemplates: [ArtifactTemplate!]!
+  myProposals: [Proposal!]!
+  availableProjects: [Project!]!
+  notInterestedProjects: [Project!]!
+}
+
+type Mutation {
+  createProject(input: CreateProjectInput!): Project!
+  updateProject(id: ID!, input: UpdateProjectInput!): Project!
+  activateProject(id: ID!): Project!
+  addProjectArtifact(projectId: ID!, input: ArtifactInput!): ProjectArtifact!
+  removeProjectArtifact(id: ID!): ProjectArtifact!
+  solicitVendor(projectId: ID!, vendorId: ID!): Solicitation!
+
+  signUp(projectId: ID!): Proposal!
+  markNotInterested(projectId: ID!): Boolean!
+  reconsiderProject(projectId: ID!): Boolean!
+  submitArtifact(input: SubmissionInput!): ArtifactSubmission!
+  submitProposal(proposalId: ID!): Proposal!
+
+  filterProposal(proposalId: ID!, pass: Boolean!): Proposal!
+  approveRound(proposalId: ID!, approve: Boolean!): Proposal!
+  rankFinalist(projectId: ID!, vendorId: ID!, rank: Int!): Finalist!
+  approveFinal(proposalId: ID!, approve: Boolean!): Proposal!
+}

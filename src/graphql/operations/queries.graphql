@@ -1,0 +1,91 @@
+query Dashboard {
+  dashboard {
+    activeProjects
+    activeEstimatedValue
+    activeVendors
+    projectsInLegal
+    projectsByActiveSegment {
+      segmentTitle
+      count
+    }
+    topVendorsByProjectCount {
+      vendorId
+      vendorName
+      value
+    }
+    topVendorsByEstimatedTotal {
+      vendorId
+      vendorName
+      value
+    }
+    topOfficersByEstimatedTotal {
+      vendorId
+      vendorName
+      value
+    }
+    estimatedValueClosingByMonth {
+      month
+      value
+    }
+  }
+}
+
+query Projects($filter: ProjectFilter) {
+  projects(filter: $filter) {
+    ...ProjectFields
+  }
+}
+
+query Project($id: ID!) {
+  project(id: $id) {
+    ...ProjectFields
+  }
+}
+
+query ProjectAreas {
+  projectAreas {
+    id
+    name
+  }
+}
+
+query Vendors {
+  vendors {
+    ...UserFields
+  }
+}
+
+query Vendor($id: ID!) {
+  vendor(id: $id) {
+    ...UserFields
+  }
+}
+
+query ArtifactTemplates {
+  artifactTemplates {
+    id
+    title
+    description
+    type
+    surveyJsSchema
+    shared
+  }
+}
+
+query MyProposals {
+  myProposals {
+    ...ProposalFields
+  }
+}
+
+query AvailableProjects {
+  availableProjects {
+    ...ProjectFields
+  }
+}
+
+query NotInterestedProjects {
+  notInterestedProjects {
+    ...ProjectFields
+  }
+}

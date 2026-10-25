@@ -1,0 +1,100 @@
+fragment UserFields on User {
+  id
+  name
+  email
+  phone
+  roles
+  companyName
+  jurisdiction
+  lastActive
+}
+
+fragment ProjectArtifactFields on ProjectArtifact {
+  id
+  projectId
+  templateId
+  title
+  description
+  type
+  surveyJsSchema
+  isActive
+}
+
+fragment ProjectSegmentFields on ProjectSegment {
+  id
+  projectId
+  title
+  order
+  openDate
+  closeDate
+}
+
+fragment ProjectFields on Project {
+  id
+  projectAreaId
+  name
+  estimatedValue
+  outline
+  scope
+  openDate
+  closeDate
+  assignedLeadId
+  officerId
+  status
+  isPublic
+  area {
+    id
+    name
+  }
+  assignedLead {
+    id
+    name
+  }
+  officer {
+    id
+    name
+  }
+  segments {
+    ...ProjectSegmentFields
+  }
+  artifacts {
+    ...ProjectArtifactFields
+  }
+}
+
+fragment SubmissionFields on ArtifactSubmission {
+  id
+  proposalId
+  projectArtifactId
+  type
+  surveyJsResponses
+  documentName
+  submittedAt
+}
+
+fragment ProposalFields on Proposal {
+  id
+  projectId
+  vendorId
+  status
+  signedUpAt
+  vendor {
+    id
+    name
+    companyName
+  }
+  project {
+    id
+    name
+    status
+  }
+  submissions {
+    ...SubmissionFields
+  }
+  additionalItems {
+    id
+    proposalId
+    name
+    note
+  }
+}

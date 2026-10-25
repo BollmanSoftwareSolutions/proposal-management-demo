@@ -1,0 +1,92 @@
+mutation CreateProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
+    ...ProjectFields
+  }
+}
+
+mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
+  updateProject(id: $id, input: $input) {
+    ...ProjectFields
+  }
+}
+
+mutation ActivateProject($id: ID!) {
+  activateProject(id: $id) {
+    ...ProjectFields
+  }
+}
+
+mutation AddProjectArtifact($projectId: ID!, $input: ArtifactInput!) {
+  addProjectArtifact(projectId: $projectId, input: $input) {
+    ...ProjectArtifactFields
+  }
+}
+
+mutation RemoveProjectArtifact($id: ID!) {
+  removeProjectArtifact(id: $id) {
+    ...ProjectArtifactFields
+  }
+}
+
+mutation SolicitVendor($projectId: ID!, $vendorId: ID!) {
+  solicitVendor(projectId: $projectId, vendorId: $vendorId) {
+    id
+    projectId
+    vendorId
+    invitedAt
+  }
+}
+
+mutation SignUp($projectId: ID!) {
+  signUp(projectId: $projectId) {
+    ...ProposalFields
+  }
+}
+
+mutation MarkNotInterested($projectId: ID!) {
+  markNotInterested(projectId: $projectId)
+}
+
+mutation ReconsiderProject($projectId: ID!) {
+  reconsiderProject(projectId: $projectId)
+}
+
+mutation SubmitArtifact($input: SubmissionInput!) {
+  submitArtifact(input: $input) {
+    ...SubmissionFields
+  }
+}
+
+mutation SubmitProposal($proposalId: ID!) {
+  submitProposal(proposalId: $proposalId) {
+    ...ProposalFields
+  }
+}
+
+mutation FilterProposal($proposalId: ID!, $pass: Boolean!) {
+  filterProposal(proposalId: $proposalId, pass: $pass) {
+    ...ProposalFields
+  }
+}
+
+mutation ApproveRound($proposalId: ID!, $approve: Boolean!) {
+  approveRound(proposalId: $proposalId, approve: $approve) {
+    ...ProposalFields
+  }
+}
+
+mutation RankFinalist($projectId: ID!, $vendorId: ID!, $rank: Int!) {
+  rankFinalist(projectId: $projectId, vendorId: $vendorId, rank: $rank) {
+    id
+    projectId
+    vendorId
+    rank
+    status
+  }
+}
+
+mutation ApproveFinal($proposalId: ID!, $approve: Boolean!) {
+  approveFinal(proposalId: $proposalId, approve: $approve) {
+    ...ProposalFields
+  }
+}
