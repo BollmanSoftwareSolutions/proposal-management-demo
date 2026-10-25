@@ -65,7 +65,7 @@ and 6 depend on both feature sets.
 - "Reset demo data" action wired to `resetStore` + query cache clear.
 
 ### Phase 3 — Procurement features
-- Projects: Active / In-development / Create tabs.
+- Projects: Active / In-development / Closed / Create tabs.
 - Project detail tabs: Setup (edit + lock), Artifacts (soft delete + submissions
   sub-rows), Vendors (status + submission/additional sub-rows), Finalists (rank).
 - Vendors list + vendor detail.

@@ -87,6 +87,8 @@ fragment ProposalFields on Proposal {
     id
     name
     status
+    estimatedValue
+    closeDate
   }
   submissions {
     ...SubmissionFields
@@ -97,4 +99,24 @@ fragment ProposalFields on Proposal {
     name
     note
   }
+}
+
+fragment FinalistFields on Finalist {
+  id
+  projectId
+  vendorId
+  rank
+  status
+  vendor {
+    id
+    name
+    companyName
+  }
+}
+
+fragment SolicitationFields on Solicitation {
+  id
+  projectId
+  vendorId
+  invitedAt
 }

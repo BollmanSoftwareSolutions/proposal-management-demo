@@ -92,10 +92,12 @@ Charts use MUI X Charts; data comes from derived aggregates (see
 [Data Model §5](./02-data-model.md)).
 
 ### 4.3 Projects (procurement) — `/projects`
-Three tabs:
-1. **Active** — ordered by next segment end date; each row links to the project.
-2. **In development** (not active) — ordered by solicitation open date.
-3. **Create new project** — form (Area, Name, Value, Outline, Scope, Open/Close
+Four tabs:
+1. **Active** — every project that is neither Draft nor Closed (e.g. Active and
+   In legal); ordered by next segment end date; each row links to the project.
+2. **In development** — Draft projects only; ordered by solicitation open date.
+3. **Closed** — Closed projects only; ordered by solicitation open date.
+4. **Create new project** — form (Area, Name, Value, Outline, Scope, Open/Close
    dates, assigned Lead).
 
 ### 4.4 Project detail (procurement) — `/projects/$projectId`
