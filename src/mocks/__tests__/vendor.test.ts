@@ -150,3 +150,29 @@ describe('vendor proposal completion', () => {
     expect(result.status).toBe('Submitted')
   })
 })
+
+describe('vendor demographics', () => {
+  beforeEach(resetStore)
+
+  it('returns the acting identity from me', () => {
+    expect(queries.me(vendor()).id).toBe('user-vendor')
+    expect(queries.me(lead()).id).toBe('user-lead')
+  })
+
+  it('updates only the provided demographic fields on the acting user', () => {
+    const before = vendor()
+    const originalEmail = before.email
+    const updated = mutations.updateDemographics(vendor(), {
+      companyName: 'Rebranded Supplies',
+      jurisdiction: 'Oregon',
+    })
+    expect(updated.companyName).toBe('Rebranded Supplies')
+    expect(updated.jurisdiction).toBe('Oregon')
+    // Omitted fields are untouched.
+    expect(updated.email).toBe(originalEmail)
+    // Change persists in the store.
+    expect(
+      getStore().users.find((u) => u.id === 'user-vendor')?.companyName,
+    ).toBe('Rebranded Supplies')
+  })
+})

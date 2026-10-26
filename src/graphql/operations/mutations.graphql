@@ -72,6 +72,12 @@ mutation AddAdditionalItem($proposalId: ID!, $name: String!, $note: String) {
   }
 }
 
+mutation UpdateDemographics($input: DemographicsInput!) {
+  updateDemographics(input: $input) {
+    ...UserFields
+  }
+}
+
 mutation FilterProposal($proposalId: ID!, $pass: Boolean!) {
   filterProposal(proposalId: $proposalId, pass: $pass) {
     ...ProposalFields

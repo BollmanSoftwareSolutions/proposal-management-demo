@@ -160,6 +160,19 @@ type MonthValueMetric {
   value: Float!
 }
 
+enum SegmentEventKind {
+  Open
+  Close
+}
+
+type SegmentEventMetric {
+  projectId: ID!
+  projectName: String!
+  segmentTitle: String!
+  date: String!
+  kind: SegmentEventKind!
+}
+
 type DashboardMetrics {
   activeProjects: Int!
   activeEstimatedValue: Float!
@@ -170,6 +183,7 @@ type DashboardMetrics {
   topVendorsByEstimatedTotal: [TopVendorMetric!]!
   topOfficersByEstimatedTotal: [TopVendorMetric!]!
   estimatedValueClosingByMonth: [MonthValueMetric!]!
+  upcomingSegmentEvents: [SegmentEventMetric!]!
 }
 
 input ProjectFilter {
@@ -215,8 +229,16 @@ input SubmissionInput {
   documentName: String
 }
 
+input DemographicsInput {
+  companyName: String
+  jurisdiction: String
+  phone: String
+  email: String
+}
+
 type Query {
   dashboard: DashboardMetrics!
+  me: User!
   projects(filter: ProjectFilter): [Project!]!
   project(id: ID!): Project
   projectAreas: [ProjectArea!]!
@@ -249,6 +271,7 @@ type Mutation {
   submitArtifact(input: SubmissionInput!): ArtifactSubmission!
   submitProposal(proposalId: ID!): Proposal!
   addAdditionalItem(proposalId: ID!, name: String!, note: String): AdditionalItem!
+  updateDemographics(input: DemographicsInput!): User!
 
   filterProposal(proposalId: ID!, pass: Boolean!): Proposal!
   approveRound(proposalId: ID!, approve: Boolean!): Proposal!

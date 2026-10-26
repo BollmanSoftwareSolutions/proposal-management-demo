@@ -18,6 +18,11 @@ export function dashboard(identity: User) {
   return computeDashboard()
 }
 
+/** The acting identity (used by the vendor dashboard for scoped demographics). */
+export function me(identity: User) {
+  return identity
+}
+
 export function projects(identity: User, filter?: ProjectFilter | null) {
   requireProcurement(identity)
   let list = getStore().projects

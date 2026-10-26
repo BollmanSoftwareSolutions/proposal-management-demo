@@ -27,6 +27,19 @@ query Dashboard {
       month
       value
     }
+    upcomingSegmentEvents {
+      projectId
+      projectName
+      segmentTitle
+      date
+      kind
+    }
+  }
+}
+
+query Me {
+  me {
+    ...UserFields
   }
 }
 

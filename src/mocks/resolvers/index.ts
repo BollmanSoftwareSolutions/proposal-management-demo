@@ -288,6 +288,33 @@ export function addAdditionalItem(
   return item
 }
 
+interface DemographicsInput {
+  companyName?: string | null
+  jurisdiction?: string | null
+  phone?: string | null
+  email?: string | null
+}
+
+/** Update the acting user's own demographic/contact fields (vendor dashboard). */
+export function updateDemographics(identity: User, input: DemographicsInput) {
+  const user = getStore().users.find((u) => u.id === identity.id)
+  if (!user) throw new NotFoundError(`User not found: ${identity.id}`)
+  if (input.companyName !== undefined && input.companyName !== null) {
+    user.companyName = input.companyName
+  }
+  if (input.jurisdiction !== undefined && input.jurisdiction !== null) {
+    user.jurisdiction = input.jurisdiction
+  }
+  if (input.phone !== undefined && input.phone !== null) {
+    user.phone = input.phone
+  }
+  if (input.email !== undefined && input.email !== null) {
+    user.email = input.email
+  }
+  user.lastActive = new Date().toISOString()
+  return user
+}
+
 export function filterProposal(
   identity: User,
   proposalId: string,

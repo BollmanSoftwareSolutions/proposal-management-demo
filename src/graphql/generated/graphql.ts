@@ -28,6 +28,13 @@ export type CreateProjectInput = {
   scope: string;
 };
 
+export type DemographicsInput = {
+  companyName?: string | null | undefined;
+  email?: string | null | undefined;
+  jurisdiction?: string | null | undefined;
+  phone?: string | null | undefined;
+};
+
 export type FinalistStatus =
   | 'Declined'
   | 'SentToLegal'
@@ -57,6 +64,10 @@ export type Role =
   | 'Lead'
   | 'Officer'
   | 'Vendor';
+
+export type SegmentEventKind =
+  | 'Close'
+  | 'Open';
 
 export type SubmissionInput = {
   documentName?: string | null | undefined;
@@ -182,6 +193,13 @@ export type AddAdditionalItemMutationVariables = Exact<{
 
 export type AddAdditionalItemMutation = { addAdditionalItem: { id: string, proposalId: string, name: string, note: string } };
 
+export type UpdateDemographicsMutationVariables = Exact<{
+  input: DemographicsInput;
+}>;
+
+
+export type UpdateDemographicsMutation = { updateDemographics: { id: string, name: string, email: string, phone: string, roles: Array<Role>, companyName: string | null, jurisdiction: string | null, lastActive: string } };
+
 export type FilterProposalMutationVariables = Exact<{
   proposalId: string;
   pass: boolean;
@@ -218,7 +236,12 @@ export type ApproveFinalMutation = { approveFinal: { id: string, projectId: stri
 export type DashboardQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DashboardQuery = { dashboard: { activeProjects: number, activeEstimatedValue: number, activeVendors: number, projectsInLegal: number, projectsByActiveSegment: Array<{ segmentTitle: string, count: number }>, topVendorsByProjectCount: Array<{ vendorId: string, vendorName: string, value: number }>, topVendorsByEstimatedTotal: Array<{ vendorId: string, vendorName: string, value: number }>, topOfficersByEstimatedTotal: Array<{ vendorId: string, vendorName: string, value: number }>, estimatedValueClosingByMonth: Array<{ month: string, value: number }> } };
+export type DashboardQuery = { dashboard: { activeProjects: number, activeEstimatedValue: number, activeVendors: number, projectsInLegal: number, projectsByActiveSegment: Array<{ segmentTitle: string, count: number }>, topVendorsByProjectCount: Array<{ vendorId: string, vendorName: string, value: number }>, topVendorsByEstimatedTotal: Array<{ vendorId: string, vendorName: string, value: number }>, topOfficersByEstimatedTotal: Array<{ vendorId: string, vendorName: string, value: number }>, estimatedValueClosingByMonth: Array<{ month: string, value: number }>, upcomingSegmentEvents: Array<{ projectId: string, projectName: string, segmentTitle: string, date: string, kind: SegmentEventKind }> } };
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { me: { id: string, name: string, email: string, phone: string, roles: Array<Role>, companyName: string | null, jurisdiction: string | null, lastActive: string } };
 
 export type ProjectsQueryVariables = Exact<{
   filter?: ProjectFilter | null | undefined;
@@ -1024,6 +1047,39 @@ export const useAddAdditionalItemMutation = <
 
 useAddAdditionalItemMutation.fetcher = (variables: AddAdditionalItemMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<AddAdditionalItemMutation, AddAdditionalItemMutationVariables>(AddAdditionalItemDocument, variables, options);
 
+export const UpdateDemographicsDocument = new TypedDocumentString(`
+    mutation UpdateDemographics($input: DemographicsInput!) {
+  updateDemographics(input: $input) {
+    ...UserFields
+  }
+}
+    fragment UserFields on User {
+  id
+  name
+  email
+  phone
+  roles
+  companyName
+  jurisdiction
+  lastActive
+}`);
+
+export const useUpdateDemographicsMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateDemographicsMutation, TError, UpdateDemographicsMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateDemographicsMutation, TError, UpdateDemographicsMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateDemographics'],
+    mutationFn: (variables?: UpdateDemographicsMutationVariables) => fetchGraphQL<UpdateDemographicsMutation, UpdateDemographicsMutationVariables>(UpdateDemographicsDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useUpdateDemographicsMutation.fetcher = (variables: UpdateDemographicsMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<UpdateDemographicsMutation, UpdateDemographicsMutationVariables>(UpdateDemographicsDocument, variables, options);
+
 export const FilterProposalDocument = new TypedDocumentString(`
     mutation FilterProposal($proposalId: ID!, $pass: Boolean!) {
   filterProposal(proposalId: $proposalId, pass: $pass) {
@@ -1262,6 +1318,13 @@ export const DashboardDocument = new TypedDocumentString(`
       month
       value
     }
+    upcomingSegmentEvents {
+      projectId
+      projectName
+      segmentTitle
+      date
+      kind
+    }
   }
 }
     `);
@@ -1286,6 +1349,44 @@ useDashboardQuery.getKey = (variables?: DashboardQueryVariables) => variables ==
 
 
 useDashboardQuery.fetcher = (variables?: DashboardQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<DashboardQuery, DashboardQueryVariables>(DashboardDocument, variables, options);
+
+export const MeDocument = new TypedDocumentString(`
+    query Me {
+  me {
+    ...UserFields
+  }
+}
+    fragment UserFields on User {
+  id
+  name
+  email
+  phone
+  roles
+  companyName
+  jurisdiction
+  lastActive
+}`);
+
+export const useMeQuery = <
+      TData = MeQuery,
+      TError = unknown
+    >(
+      variables?: MeQueryVariables,
+      options?: Omit<UseQueryOptions<MeQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MeQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<MeQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['Me'] : ['Me', variables],
+    queryFn: fetchGraphQL<MeQuery, MeQueryVariables>(MeDocument, variables),
+    ...options
+  }
+    )};
+
+useMeQuery.getKey = (variables?: MeQueryVariables) => variables === undefined ? ['Me'] : ['Me', variables];
+
+
+useMeQuery.fetcher = (variables?: MeQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<MeQuery, MeQueryVariables>(MeDocument, variables, options);
 
 export const ProjectsDocument = new TypedDocumentString(`
     query Projects($filter: ProjectFilter) {
