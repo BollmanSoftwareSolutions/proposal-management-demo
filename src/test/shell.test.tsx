@@ -62,9 +62,11 @@ describe('App shell & roles (Phase 2)', () => {
   })
 
   it('resolves the project detail route and defaults to the Setup tab', async () => {
-    renderApp({ initialPath: '/projects/proj-1' })
+    renderApp({ initialPath: '/projects/project-1' })
 
-    expect(await screen.findByText(/Project proj-1/i)).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: /HVAC Overhaul/i }),
+    ).toBeInTheDocument()
     const tablists = await screen.findAllByRole('tablist')
     const detailTabs = tablists[tablists.length - 1]
     expect(within(detailTabs).getByRole('tab', { name: 'Setup' })).toHaveAttribute(

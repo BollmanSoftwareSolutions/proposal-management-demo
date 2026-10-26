@@ -5,6 +5,24 @@ This app manages all stages of vendor proposal management for projects.
 
 **Vendors** submit proposals to many projects. They satisfy artifacts requested by the **Procurement Officer**.
 
+## Running the demo
+The demo is a client-only Vite + React + TypeScript app. All data is seeded in the
+browser via a mock GraphQL API (MSW), so no backend is required.
+
+```bash
+npm install     # install dependencies
+npm run dev     # start the dev server (http://localhost:5173)
+npm run build   # type-check and build for production
+npm run test    # run the Vitest suite
+npm run lint    # run ESLint
+```
+
+Use the **role switcher** in the header to move between the Procurement Lead,
+Procurement Officer, and Vendor experiences, and the **Reset demo data** action in
+the user menu to restore the seeded state. The end-to-end process is summarized in
+the [Workflow](#workflow) section below and detailed in the
+[Workflows design doc](design-docs/03-workflows.md).
+
 ## The Production Application
 For descriptive purposes only. This README outlines the workflow and technology used for the Production application. The demo application will use other libraries and a simplified, client only UI.
 

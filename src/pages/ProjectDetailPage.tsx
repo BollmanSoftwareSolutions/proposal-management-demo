@@ -1,3 +1,4 @@
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Tabs from '@mui/material/Tabs'
@@ -47,6 +48,9 @@ export function ProjectDetailPage() {
       ? 'Loading…'
       : `Project ${projectId}`
 
+  const notFound = !projectQuery.isLoading && !projectQuery.error && !project
+  const unavailable = Boolean(projectQuery.error) || notFound
+
   return (
     <Box>
       <Typography variant="overline" color="text.secondary">
@@ -66,23 +70,39 @@ export function ProjectDetailPage() {
           {project.area?.name}
         </Typography>
       )}
-      <Tabs
-        value={active}
-        variant="scrollable"
-        allowScrollButtonsMobile
-        sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}
-      >
-        {tabs.map((t) => (
-          <LinkTab
-            key={t.segment}
-            label={t.label}
-            value={`${base}/${t.segment}`}
-            to="/projects/$projectId/$tab"
-            params={{ projectId, tab: t.segment }}
-          />
-        ))}
-      </Tabs>
-      <Outlet />
+      {Boolean(projectQuery.error) && (
+        <Alert severity="error" sx={{ my: 2 }}>
+          {projectQuery.error instanceof Error
+            ? projectQuery.error.message
+            : 'This project could not be loaded.'}
+        </Alert>
+      )}
+      {notFound && (
+        <Alert severity="warning" sx={{ my: 2 }}>
+          Project not found. It may have been removed or you may not have access.
+        </Alert>
+      )}
+      {!unavailable && (
+        <>
+          <Tabs
+            value={active}
+            variant="scrollable"
+            allowScrollButtonsMobile
+            sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}
+          >
+            {tabs.map((t) => (
+              <LinkTab
+                key={t.segment}
+                label={t.label}
+                value={`${base}/${t.segment}`}
+                to="/projects/$projectId/$tab"
+                params={{ projectId, tab: t.segment }}
+              />
+            ))}
+          </Tabs>
+          <Outlet />
+        </>
+      )}
     </Box>
   )
 }

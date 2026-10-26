@@ -127,7 +127,7 @@ export function VendorArtifactsTab({ projectId }: { projectId: string }) {
                     flexWrap: 'wrap',
                   }}
                 >
-                  <Box sx={{ flex: 1, minWidth: 240 }}>
+                  <Box sx={{ flex: 1, minWidth: { xs: '100%', sm: 240 } }}>
                     <Stack
                       direction="row"
                       spacing={1}
