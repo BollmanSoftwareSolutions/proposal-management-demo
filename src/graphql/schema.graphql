@@ -231,6 +231,8 @@ type Query {
   myProposals: [Proposal!]!
   availableProjects: [Project!]!
   notInterestedProjects: [Project!]!
+  mySolicitations: [Solicitation!]!
+  sharedArtifacts: [ArtifactTemplate!]!
 }
 
 type Mutation {
@@ -246,6 +248,7 @@ type Mutation {
   reconsiderProject(projectId: ID!): Boolean!
   submitArtifact(input: SubmissionInput!): ArtifactSubmission!
   submitProposal(proposalId: ID!): Proposal!
+  addAdditionalItem(proposalId: ID!, name: String!, note: String): AdditionalItem!
 
   filterProposal(proposalId: ID!, pass: Boolean!): Proposal!
   approveRound(proposalId: ID!, approve: Boolean!): Proposal!

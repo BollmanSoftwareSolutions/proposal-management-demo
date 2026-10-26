@@ -79,6 +79,14 @@ const OPERATIONS: Record<string, OperationDef> = {
     field: 'notInterestedProjects',
     resolve: (id) => queries.notInterestedProjects(id),
   },
+  MySolicitations: {
+    field: 'mySolicitations',
+    resolve: (id) => queries.mySolicitations(id),
+  },
+  SharedArtifacts: {
+    field: 'sharedArtifacts',
+    resolve: (id) => queries.sharedArtifacts(id),
+  },
   CreateProject: {
     field: 'createProject',
     resolve: (id, v) => mutations.createProject(id, v.input as never),
@@ -125,6 +133,16 @@ const OPERATIONS: Record<string, OperationDef> = {
   SubmitProposal: {
     field: 'submitProposal',
     resolve: (id, v) => mutations.submitProposal(id, v.proposalId as string),
+  },
+  AddAdditionalItem: {
+    field: 'addAdditionalItem',
+    resolve: (id, v) =>
+      mutations.addAdditionalItem(
+        id,
+        v.proposalId as string,
+        v.name as string,
+        v.note as string | null,
+      ),
   },
   FilterProposal: {
     field: 'filterProposal',

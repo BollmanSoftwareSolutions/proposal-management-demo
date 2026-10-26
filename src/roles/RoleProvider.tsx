@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { setCurrentUserId } from '../graphql/identity'
 import {
   RoleContext,
@@ -15,13 +22,26 @@ export function RoleProvider({
   children: ReactNode
   initialIdentityId?: string
 }) {
+  const queryClient = useQueryClient()
   const [identityId, setIdentityId] = useState<string>(
     initialIdentityId ?? SEED_IDENTITIES[0].id,
   )
 
+  // Keep the fetcher's identity header in sync during render so queries mounted
+  // by children read the current identity before their fetch effects run
+  // (child effects fire before this provider's effects).
+  useMemo(() => setCurrentUserId(identityId), [identityId])
+
+  // When the identity changes, drop cached data so every query refetches under
+  // the new identity's access rules rather than showing the prior identity's
+  // results (or a stale access error).
+  const previousIdentityId = useRef(identityId)
   useEffect(() => {
-    setCurrentUserId(identityId)
-  }, [identityId])
+    if (previousIdentityId.current !== identityId) {
+      previousIdentityId.current = identityId
+      void queryClient.resetQueries()
+    }
+  }, [identityId, queryClient])
 
   const value = useMemo<RoleContextValue>(() => {
     const identity: Identity =

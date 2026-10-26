@@ -8,28 +8,36 @@ import { ProjectStatusChip } from '../components/common/StatusChip'
 import { useProjectQuery } from '../graphql/generated/graphql'
 import { useRole } from '../roles/roleContext'
 
-const TABS = [
+const PROCUREMENT_TABS = [
   { label: 'Setup', segment: 'setup' },
   { label: 'Artifacts', segment: 'artifacts' },
   { label: 'Vendors', segment: 'vendors' },
   { label: 'Finalists', segment: 'finalists' },
 ] as const
 
+const VENDOR_TABS = [
+  { label: 'Overview', segment: 'setup' },
+  { label: 'Artifacts', segment: 'artifacts' },
+  { label: 'Additional items', segment: 'items' },
+] as const
+
 /**
  * Project detail layout (`/projects/$projectId`). A deep-linkable tab strip
- * (Setup / Artifacts / Vendors / Finalists, §4.4) drives nested routes rendered
- * through the <Outlet />. The vendor view (§4.11) shares this structure; vendor
- * content is filled in Phase 4.
+ * drives nested routes rendered through the <Outlet />. Procurement sees Setup /
+ * Artifacts / Vendors / Finalists (§4.4); vendors see Overview / Artifacts /
+ * Additional items (§4.11).
  */
 export function ProjectDetailPage() {
   const { projectId } = useParams({ from: '/projects/$projectId' })
   const { hasRole } = useRole()
+  const isVendor = hasRole('Vendor')
+  const tabs = isVendor ? VENDOR_TABS : PROCUREMENT_TABS
   const projectQuery = useProjectQuery({ id: projectId })
   const project = projectQuery.data?.project ?? null
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const base = `/projects/${projectId}`
   const active =
-    TABS.map((t) => `${base}/${t.segment}`).find(
+    tabs.map((t) => `${base}/${t.segment}`).find(
       (to) => pathname === to || pathname.startsWith(`${to}/`),
     ) ?? false
 
@@ -42,7 +50,7 @@ export function ProjectDetailPage() {
   return (
     <Box>
       <Typography variant="overline" color="text.secondary">
-        {hasRole('Vendor') ? 'Proposal' : 'Project'}
+        {isVendor ? 'Proposal' : 'Project'}
       </Typography>
       <Stack
         direction="row"
@@ -64,7 +72,7 @@ export function ProjectDetailPage() {
         allowScrollButtonsMobile
         sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}
       >
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <LinkTab
             key={t.segment}
             label={t.label}

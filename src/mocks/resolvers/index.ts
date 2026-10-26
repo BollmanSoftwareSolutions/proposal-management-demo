@@ -1,5 +1,6 @@
 import { getStore } from '../store/store'
 import type {
+  AdditionalItem,
   ArtifactSubmission,
   ArtifactType,
   Finalist,
@@ -264,6 +265,27 @@ export function submitProposal(identity: User, proposalId: string) {
   }
   proposal.status = 'Submitted'
   return proposalDTO(proposal)
+}
+
+export function addAdditionalItem(
+  identity: User,
+  proposalId: string,
+  name: string,
+  note?: string | null,
+) {
+  requireVendor(identity)
+  const proposal = findProposal(proposalId)
+  if (proposal.vendorId !== identity.id) {
+    throw new AccessError('Cannot add items to another vendor proposal')
+  }
+  const item: AdditionalItem = {
+    id: newId('item'),
+    proposalId,
+    name,
+    note: note ?? '',
+  }
+  proposal.additionalItems.push(item)
+  return item
 }
 
 export function filterProposal(

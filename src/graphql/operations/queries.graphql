@@ -119,3 +119,20 @@ query NotInterestedProjects {
     ...ProjectFields
   }
 }
+
+query MySolicitations {
+  mySolicitations {
+    ...SolicitationFields
+  }
+}
+
+query SharedArtifacts {
+  sharedArtifacts {
+    id
+    title
+    description
+    type
+    surveyJsSchema
+    shared
+  }
+}
