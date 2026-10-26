@@ -80,6 +80,45 @@ export function computeDashboard() {
     monthValues.set(key, (monthValues.get(key) ?? 0) + project.estimatedValue)
   }
 
+  // Segment open/close events falling within the next 60 days, across the
+  // active procurement pipeline (Active + InLegal projects).
+  const horizon = now + 60 * 86_400_000
+  const upcomingSegmentEvents = store.projects
+    .filter((p) => p.status === 'Active' || p.status === 'InLegal')
+    .flatMap((project) =>
+      project.segments.flatMap((segment) => {
+        const events: {
+          projectId: string
+          projectName: string
+          segmentTitle: string
+          date: string
+          kind: 'Open' | 'Close'
+        }[] = []
+        const open = new Date(segment.openDate).getTime()
+        const close = new Date(segment.closeDate).getTime()
+        if (open >= now && open <= horizon) {
+          events.push({
+            projectId: project.id,
+            projectName: project.name,
+            segmentTitle: segment.title,
+            date: segment.openDate,
+            kind: 'Open',
+          })
+        }
+        if (close >= now && close <= horizon) {
+          events.push({
+            projectId: project.id,
+            projectName: project.name,
+            segmentTitle: segment.title,
+            date: segment.closeDate,
+            kind: 'Close',
+          })
+        }
+        return events
+      }),
+    )
+    .sort((a, b) => a.date.localeCompare(b.date))
+
   return {
     activeProjects: activeProjects.length,
     activeEstimatedValue: activeProjects.reduce(
@@ -104,5 +143,6 @@ export function computeDashboard() {
     estimatedValueClosingByMonth: [...monthValues.entries()]
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([month, value]) => ({ month, value })),
+    upcomingSegmentEvents,
   }
 }

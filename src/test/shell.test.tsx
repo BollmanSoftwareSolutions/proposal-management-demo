@@ -50,7 +50,8 @@ describe('App shell & roles (Phase 2)', () => {
 
     await screen.findByRole('tablist')
     await user.click(screen.getByRole('button', { name: /user menu/i }))
-    await user.click(await screen.findByText('Vera Vendor'))
+    const menu = await screen.findByRole('menu')
+    await user.click(within(menu).getByText('Vera Vendor'))
 
     await waitFor(() => {
       const nav = screen.getByRole('tablist')

@@ -24,6 +24,7 @@ interface OperationDef {
 /** Maps generated operation names to a root field + resolver invocation. */
 const OPERATIONS: Record<string, OperationDef> = {
   Dashboard: { field: 'dashboard', resolve: (id) => queries.dashboard(id) },
+  Me: { field: 'me', resolve: (id) => queries.me(id) },
   Projects: {
     field: 'projects',
     resolve: (id, v) => queries.projects(id, v.filter as never),
@@ -143,6 +144,10 @@ const OPERATIONS: Record<string, OperationDef> = {
         v.name as string,
         v.note as string | null,
       ),
+  },
+  UpdateDemographics: {
+    field: 'updateDemographics',
+    resolve: (id, v) => mutations.updateDemographics(id, v.input as never),
   },
   FilterProposal: {
     field: 'filterProposal',
