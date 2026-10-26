@@ -552,5 +552,6 @@ export function seed(): DemoStore {
     proposals,
     finalists,
     notInterested,
+    sharedArtifactResponses: [],
   }
 }

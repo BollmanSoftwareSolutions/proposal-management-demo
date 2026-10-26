@@ -13,6 +13,14 @@ export type ArtifactInput = {
   type: ArtifactType;
 };
 
+export type ArtifactTemplateInput = {
+  description: string;
+  shared: boolean;
+  surveyJsSchema?: unknown;
+  title: string;
+  type: ArtifactType;
+};
+
 export type ArtifactType =
   | 'Document'
   | 'Form';
@@ -92,6 +100,8 @@ export type UserFieldsFragment = { id: string, name: string, email: string, phon
 
 export type ProjectArtifactFieldsFragment = { id: string, projectId: string, templateId: string | null, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, isActive: boolean };
 
+export type ArtifactTemplateFieldsFragment = { id: string, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, shared: boolean };
+
 export type ProjectSegmentFieldsFragment = { id: string, projectId: string, title: string, order: number, openDate: string, closeDate: string };
 
 export type ProjectFieldsFragment = { id: string, projectAreaId: string, name: string, estimatedValue: number, outline: string, scope: string, openDate: string, closeDate: string, assignedLeadId: string, officerId: string, status: ProjectStatus, isPublic: boolean, area: { id: string, name: string } | null, assignedLead: { id: string, name: string } | null, officer: { id: string, name: string } | null, segments: Array<{ id: string, projectId: string, title: string, order: number, openDate: string, closeDate: string }>, artifacts: Array<{ id: string, projectId: string, templateId: string | null, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, isActive: boolean }> };
@@ -141,6 +151,28 @@ export type RemoveProjectArtifactMutationVariables = Exact<{
 
 export type RemoveProjectArtifactMutation = { removeProjectArtifact: { id: string, projectId: string, templateId: string | null, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, isActive: boolean } };
 
+export type CreateArtifactTemplateMutationVariables = Exact<{
+  input: ArtifactTemplateInput;
+}>;
+
+
+export type CreateArtifactTemplateMutation = { createArtifactTemplate: { id: string, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, shared: boolean } };
+
+export type UpdateArtifactTemplateMutationVariables = Exact<{
+  id: string;
+  input: ArtifactTemplateInput;
+}>;
+
+
+export type UpdateArtifactTemplateMutation = { updateArtifactTemplate: { id: string, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, shared: boolean } };
+
+export type DeleteArtifactTemplateMutationVariables = Exact<{
+  id: string;
+}>;
+
+
+export type DeleteArtifactTemplateMutation = { deleteArtifactTemplate: boolean };
+
 export type SolicitVendorMutationVariables = Exact<{
   projectId: string;
   vendorId: string;
@@ -176,6 +208,14 @@ export type SubmitArtifactMutationVariables = Exact<{
 
 
 export type SubmitArtifactMutation = { submitArtifact: { id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string } };
+
+export type SaveSharedArtifactResponseMutationVariables = Exact<{
+  templateId: string;
+  surveyJsResponses: unknown;
+}>;
+
+
+export type SaveSharedArtifactResponseMutation = { saveSharedArtifactResponse: { id: string, vendorId: string, templateId: string, surveyJsResponses: unknown, updatedAt: string } };
 
 export type SubmitProposalMutationVariables = Exact<{
   proposalId: string;
@@ -337,6 +377,11 @@ export type SharedArtifactsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SharedArtifactsQuery = { sharedArtifacts: Array<{ id: string, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, shared: boolean }> };
 
+export type MySharedArtifactResponsesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MySharedArtifactResponsesQuery = { mySharedArtifactResponses: Array<{ id: string, vendorId: string, templateId: string, surveyJsResponses: unknown, updatedAt: string }> };
+
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -368,6 +413,16 @@ export const UserFieldsFragmentDoc = new TypedDocumentString(`
   lastActive
 }
     `, {"fragmentName":"UserFields"});
+export const ArtifactTemplateFieldsFragmentDoc = new TypedDocumentString(`
+    fragment ArtifactTemplateFields on ArtifactTemplate {
+  id
+  title
+  description
+  type
+  surveyJsSchema
+  shared
+}
+    `, {"fragmentName":"ArtifactTemplateFields"});
 export const ProjectSegmentFieldsFragmentDoc = new TypedDocumentString(`
     fragment ProjectSegmentFields on ProjectSegment {
   id
@@ -797,6 +852,90 @@ export const useRemoveProjectArtifactMutation = <
 
 useRemoveProjectArtifactMutation.fetcher = (variables: RemoveProjectArtifactMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<RemoveProjectArtifactMutation, RemoveProjectArtifactMutationVariables>(RemoveProjectArtifactDocument, variables, options);
 
+export const CreateArtifactTemplateDocument = new TypedDocumentString(`
+    mutation CreateArtifactTemplate($input: ArtifactTemplateInput!) {
+  createArtifactTemplate(input: $input) {
+    ...ArtifactTemplateFields
+  }
+}
+    fragment ArtifactTemplateFields on ArtifactTemplate {
+  id
+  title
+  description
+  type
+  surveyJsSchema
+  shared
+}`);
+
+export const useCreateArtifactTemplateMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<CreateArtifactTemplateMutation, TError, CreateArtifactTemplateMutationVariables, TContext>) => {
+    
+    return useMutation<CreateArtifactTemplateMutation, TError, CreateArtifactTemplateMutationVariables, TContext>(
+      {
+    mutationKey: ['CreateArtifactTemplate'],
+    mutationFn: (variables?: CreateArtifactTemplateMutationVariables) => fetchGraphQL<CreateArtifactTemplateMutation, CreateArtifactTemplateMutationVariables>(CreateArtifactTemplateDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useCreateArtifactTemplateMutation.fetcher = (variables: CreateArtifactTemplateMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<CreateArtifactTemplateMutation, CreateArtifactTemplateMutationVariables>(CreateArtifactTemplateDocument, variables, options);
+
+export const UpdateArtifactTemplateDocument = new TypedDocumentString(`
+    mutation UpdateArtifactTemplate($id: ID!, $input: ArtifactTemplateInput!) {
+  updateArtifactTemplate(id: $id, input: $input) {
+    ...ArtifactTemplateFields
+  }
+}
+    fragment ArtifactTemplateFields on ArtifactTemplate {
+  id
+  title
+  description
+  type
+  surveyJsSchema
+  shared
+}`);
+
+export const useUpdateArtifactTemplateMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<UpdateArtifactTemplateMutation, TError, UpdateArtifactTemplateMutationVariables, TContext>) => {
+    
+    return useMutation<UpdateArtifactTemplateMutation, TError, UpdateArtifactTemplateMutationVariables, TContext>(
+      {
+    mutationKey: ['UpdateArtifactTemplate'],
+    mutationFn: (variables?: UpdateArtifactTemplateMutationVariables) => fetchGraphQL<UpdateArtifactTemplateMutation, UpdateArtifactTemplateMutationVariables>(UpdateArtifactTemplateDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useUpdateArtifactTemplateMutation.fetcher = (variables: UpdateArtifactTemplateMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<UpdateArtifactTemplateMutation, UpdateArtifactTemplateMutationVariables>(UpdateArtifactTemplateDocument, variables, options);
+
+export const DeleteArtifactTemplateDocument = new TypedDocumentString(`
+    mutation DeleteArtifactTemplate($id: ID!) {
+  deleteArtifactTemplate(id: $id)
+}
+    `);
+
+export const useDeleteArtifactTemplateMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<DeleteArtifactTemplateMutation, TError, DeleteArtifactTemplateMutationVariables, TContext>) => {
+    
+    return useMutation<DeleteArtifactTemplateMutation, TError, DeleteArtifactTemplateMutationVariables, TContext>(
+      {
+    mutationKey: ['DeleteArtifactTemplate'],
+    mutationFn: (variables?: DeleteArtifactTemplateMutationVariables) => fetchGraphQL<DeleteArtifactTemplateMutation, DeleteArtifactTemplateMutationVariables>(DeleteArtifactTemplateDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useDeleteArtifactTemplateMutation.fetcher = (variables: DeleteArtifactTemplateMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<DeleteArtifactTemplateMutation, DeleteArtifactTemplateMutationVariables>(DeleteArtifactTemplateDocument, variables, options);
+
 export const SolicitVendorDocument = new TypedDocumentString(`
     mutation SolicitVendor($projectId: ID!, $vendorId: ID!) {
   solicitVendor(projectId: $projectId, vendorId: $vendorId) {
@@ -959,6 +1098,37 @@ export const useSubmitArtifactMutation = <
 
 
 useSubmitArtifactMutation.fetcher = (variables: SubmitArtifactMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<SubmitArtifactMutation, SubmitArtifactMutationVariables>(SubmitArtifactDocument, variables, options);
+
+export const SaveSharedArtifactResponseDocument = new TypedDocumentString(`
+    mutation SaveSharedArtifactResponse($templateId: ID!, $surveyJsResponses: JSON!) {
+  saveSharedArtifactResponse(
+    templateId: $templateId
+    surveyJsResponses: $surveyJsResponses
+  ) {
+    id
+    vendorId
+    templateId
+    surveyJsResponses
+    updatedAt
+  }
+}
+    `);
+
+export const useSaveSharedArtifactResponseMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<SaveSharedArtifactResponseMutation, TError, SaveSharedArtifactResponseMutationVariables, TContext>) => {
+    
+    return useMutation<SaveSharedArtifactResponseMutation, TError, SaveSharedArtifactResponseMutationVariables, TContext>(
+      {
+    mutationKey: ['SaveSharedArtifactResponse'],
+    mutationFn: (variables?: SaveSharedArtifactResponseMutationVariables) => fetchGraphQL<SaveSharedArtifactResponseMutation, SaveSharedArtifactResponseMutationVariables>(SaveSharedArtifactResponseDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useSaveSharedArtifactResponseMutation.fetcher = (variables: SaveSharedArtifactResponseMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<SaveSharedArtifactResponseMutation, SaveSharedArtifactResponseMutationVariables>(SaveSharedArtifactResponseDocument, variables, options);
 
 export const SubmitProposalDocument = new TypedDocumentString(`
     mutation SubmitProposal($proposalId: ID!) {
@@ -1653,15 +1823,17 @@ useVendorQuery.fetcher = (variables: VendorQueryVariables, options?: RequestInit
 export const ArtifactTemplatesDocument = new TypedDocumentString(`
     query ArtifactTemplates {
   artifactTemplates {
-    id
-    title
-    description
-    type
-    surveyJsSchema
-    shared
+    ...ArtifactTemplateFields
   }
 }
-    `);
+    fragment ArtifactTemplateFields on ArtifactTemplate {
+  id
+  title
+  description
+  type
+  surveyJsSchema
+  shared
+}`);
 
 export const useArtifactTemplatesQuery = <
       TData = ArtifactTemplatesQuery,
@@ -2184,15 +2356,17 @@ useMySolicitationsQuery.fetcher = (variables?: MySolicitationsQueryVariables, op
 export const SharedArtifactsDocument = new TypedDocumentString(`
     query SharedArtifacts {
   sharedArtifacts {
-    id
-    title
-    description
-    type
-    surveyJsSchema
-    shared
+    ...ArtifactTemplateFields
   }
 }
-    `);
+    fragment ArtifactTemplateFields on ArtifactTemplate {
+  id
+  title
+  description
+  type
+  surveyJsSchema
+  shared
+}`);
 
 export const useSharedArtifactsQuery = <
       TData = SharedArtifactsQuery,
@@ -2214,3 +2388,36 @@ useSharedArtifactsQuery.getKey = (variables?: SharedArtifactsQueryVariables) => 
 
 
 useSharedArtifactsQuery.fetcher = (variables?: SharedArtifactsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<SharedArtifactsQuery, SharedArtifactsQueryVariables>(SharedArtifactsDocument, variables, options);
+
+export const MySharedArtifactResponsesDocument = new TypedDocumentString(`
+    query MySharedArtifactResponses {
+  mySharedArtifactResponses {
+    id
+    vendorId
+    templateId
+    surveyJsResponses
+    updatedAt
+  }
+}
+    `);
+
+export const useMySharedArtifactResponsesQuery = <
+      TData = MySharedArtifactResponsesQuery,
+      TError = unknown
+    >(
+      variables?: MySharedArtifactResponsesQueryVariables,
+      options?: Omit<UseQueryOptions<MySharedArtifactResponsesQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MySharedArtifactResponsesQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<MySharedArtifactResponsesQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['MySharedArtifactResponses'] : ['MySharedArtifactResponses', variables],
+    queryFn: fetchGraphQL<MySharedArtifactResponsesQuery, MySharedArtifactResponsesQueryVariables>(MySharedArtifactResponsesDocument, variables),
+    ...options
+  }
+    )};
+
+useMySharedArtifactResponsesQuery.getKey = (variables?: MySharedArtifactResponsesQueryVariables) => variables === undefined ? ['MySharedArtifactResponses'] : ['MySharedArtifactResponses', variables];
+
+
+useMySharedArtifactResponsesQuery.fetcher = (variables?: MySharedArtifactResponsesQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<MySharedArtifactResponsesQuery, MySharedArtifactResponsesQueryVariables>(MySharedArtifactResponsesDocument, variables, options);

@@ -28,6 +28,22 @@ mutation RemoveProjectArtifact($id: ID!) {
   }
 }
 
+mutation CreateArtifactTemplate($input: ArtifactTemplateInput!) {
+  createArtifactTemplate(input: $input) {
+    ...ArtifactTemplateFields
+  }
+}
+
+mutation UpdateArtifactTemplate($id: ID!, $input: ArtifactTemplateInput!) {
+  updateArtifactTemplate(id: $id, input: $input) {
+    ...ArtifactTemplateFields
+  }
+}
+
+mutation DeleteArtifactTemplate($id: ID!) {
+  deleteArtifactTemplate(id: $id)
+}
+
 mutation SolicitVendor($projectId: ID!, $vendorId: ID!) {
   solicitVendor(projectId: $projectId, vendorId: $vendorId) {
     id
@@ -54,6 +70,22 @@ mutation ReconsiderProject($projectId: ID!) {
 mutation SubmitArtifact($input: SubmissionInput!) {
   submitArtifact(input: $input) {
     ...SubmissionFields
+  }
+}
+
+mutation SaveSharedArtifactResponse(
+  $templateId: ID!
+  $surveyJsResponses: JSON!
+) {
+  saveSharedArtifactResponse(
+    templateId: $templateId
+    surveyJsResponses: $surveyJsResponses
+  ) {
+    id
+    vendorId
+    templateId
+    surveyJsResponses
+    updatedAt
   }
 }
 

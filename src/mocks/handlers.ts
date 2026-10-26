@@ -88,6 +88,10 @@ const OPERATIONS: Record<string, OperationDef> = {
     field: 'sharedArtifacts',
     resolve: (id) => queries.sharedArtifacts(id),
   },
+  MySharedArtifactResponses: {
+    field: 'mySharedArtifactResponses',
+    resolve: (id) => queries.mySharedArtifactResponses(id),
+  },
   CreateProject: {
     field: 'createProject',
     resolve: (id, v) => mutations.createProject(id, v.input as never),
@@ -110,6 +114,19 @@ const OPERATIONS: Record<string, OperationDef> = {
     field: 'removeProjectArtifact',
     resolve: (id, v) => mutations.removeProjectArtifact(id, v.id as string),
   },
+  CreateArtifactTemplate: {
+    field: 'createArtifactTemplate',
+    resolve: (id, v) => mutations.createArtifactTemplate(id, v.input as never),
+  },
+  UpdateArtifactTemplate: {
+    field: 'updateArtifactTemplate',
+    resolve: (id, v) =>
+      mutations.updateArtifactTemplate(id, v.id as string, v.input as never),
+  },
+  DeleteArtifactTemplate: {
+    field: 'deleteArtifactTemplate',
+    resolve: (id, v) => mutations.deleteArtifactTemplate(id, v.id as string),
+  },
   SolicitVendor: {
     field: 'solicitVendor',
     resolve: (id, v) =>
@@ -130,6 +147,15 @@ const OPERATIONS: Record<string, OperationDef> = {
   SubmitArtifact: {
     field: 'submitArtifact',
     resolve: (id, v) => mutations.submitArtifact(id, v.input as never),
+  },
+  SaveSharedArtifactResponse: {
+    field: 'saveSharedArtifactResponse',
+    resolve: (id, v) =>
+      mutations.saveSharedArtifactResponse(
+        id,
+        v.templateId as string,
+        v.surveyJsResponses as Record<string, unknown>,
+      ),
   },
   SubmitProposal: {
     field: 'submitProposal',

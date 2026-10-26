@@ -76,12 +76,7 @@ query Vendor($id: ID!) {
 
 query ArtifactTemplates {
   artifactTemplates {
-    id
-    title
-    description
-    type
-    surveyJsSchema
-    shared
+    ...ArtifactTemplateFields
   }
 }
 
@@ -141,11 +136,16 @@ query MySolicitations {
 
 query SharedArtifacts {
   sharedArtifacts {
+    ...ArtifactTemplateFields
+  }
+}
+
+query MySharedArtifactResponses {
+  mySharedArtifactResponses {
     id
-    title
-    description
-    type
-    surveyJsSchema
-    shared
+    vendorId
+    templateId
+    surveyJsResponses
+    updatedAt
   }
 }
