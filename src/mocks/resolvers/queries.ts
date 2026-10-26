@@ -148,3 +148,13 @@ export function notInterestedProjects(identity: User) {
   )
   return store.projects.filter((p) => ids.has(p.id)).map(projectDTO)
 }
+
+export function mySolicitations(identity: User) {
+  requireVendor(identity)
+  return getStore().solicitations.filter((s) => s.vendorId === identity.id)
+}
+
+export function sharedArtifacts(identity: User) {
+  requireVendor(identity)
+  return getStore().artifactTemplates.filter((t) => t.shared)
+}

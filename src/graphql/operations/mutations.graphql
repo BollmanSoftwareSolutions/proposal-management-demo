@@ -63,6 +63,15 @@ mutation SubmitProposal($proposalId: ID!) {
   }
 }
 
+mutation AddAdditionalItem($proposalId: ID!, $name: String!, $note: String) {
+  addAdditionalItem(proposalId: $proposalId, name: $name, note: $note) {
+    id
+    proposalId
+    name
+    note
+  }
+}
+
 mutation FilterProposal($proposalId: ID!, $pass: Boolean!) {
   filterProposal(proposalId: $proposalId, pass: $pass) {
     ...ProposalFields

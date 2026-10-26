@@ -173,6 +173,15 @@ export type SubmitProposalMutationVariables = Exact<{
 
 export type SubmitProposalMutation = { submitProposal: { id: string, projectId: string, vendorId: string, status: ProposalStatus, signedUpAt: string, vendor: { id: string, name: string, companyName: string | null } | null, project: { id: string, name: string, status: ProjectStatus, estimatedValue: number, closeDate: string } | null, submissions: Array<{ id: string, proposalId: string, projectArtifactId: string, type: ArtifactType, surveyJsResponses: unknown, documentName: string | null, submittedAt: string }>, additionalItems: Array<{ id: string, proposalId: string, name: string, note: string }> } };
 
+export type AddAdditionalItemMutationVariables = Exact<{
+  proposalId: string;
+  name: string;
+  note?: string | null | undefined;
+}>;
+
+
+export type AddAdditionalItemMutation = { addAdditionalItem: { id: string, proposalId: string, name: string, note: string } };
+
 export type FilterProposalMutationVariables = Exact<{
   proposalId: string;
   pass: boolean;
@@ -294,6 +303,16 @@ export type NotInterestedProjectsQueryVariables = Exact<{ [key: string]: never; 
 
 
 export type NotInterestedProjectsQuery = { notInterestedProjects: Array<{ id: string, projectAreaId: string, name: string, estimatedValue: number, outline: string, scope: string, openDate: string, closeDate: string, assignedLeadId: string, officerId: string, status: ProjectStatus, isPublic: boolean, area: { id: string, name: string } | null, assignedLead: { id: string, name: string } | null, officer: { id: string, name: string } | null, segments: Array<{ id: string, projectId: string, title: string, order: number, openDate: string, closeDate: string }>, artifacts: Array<{ id: string, projectId: string, templateId: string | null, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, isActive: boolean }> }> };
+
+export type MySolicitationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MySolicitationsQuery = { mySolicitations: Array<{ id: string, projectId: string, vendorId: string, invitedAt: string }> };
+
+export type SharedArtifactsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SharedArtifactsQuery = { sharedArtifacts: Array<{ id: string, title: string, description: string, type: ArtifactType, surveyJsSchema: unknown, shared: boolean }> };
 
 
 export class TypedDocumentString<TResult, TVariables>
@@ -977,6 +996,33 @@ export const useSubmitProposalMutation = <
 
 
 useSubmitProposalMutation.fetcher = (variables: SubmitProposalMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<SubmitProposalMutation, SubmitProposalMutationVariables>(SubmitProposalDocument, variables, options);
+
+export const AddAdditionalItemDocument = new TypedDocumentString(`
+    mutation AddAdditionalItem($proposalId: ID!, $name: String!, $note: String) {
+  addAdditionalItem(proposalId: $proposalId, name: $name, note: $note) {
+    id
+    proposalId
+    name
+    note
+  }
+}
+    `);
+
+export const useAddAdditionalItemMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(options?: UseMutationOptions<AddAdditionalItemMutation, TError, AddAdditionalItemMutationVariables, TContext>) => {
+    
+    return useMutation<AddAdditionalItemMutation, TError, AddAdditionalItemMutationVariables, TContext>(
+      {
+    mutationKey: ['AddAdditionalItem'],
+    mutationFn: (variables?: AddAdditionalItemMutationVariables) => fetchGraphQL<AddAdditionalItemMutation, AddAdditionalItemMutationVariables>(AddAdditionalItemDocument, variables)(),
+    ...options
+  }
+    )};
+
+
+useAddAdditionalItemMutation.fetcher = (variables: AddAdditionalItemMutationVariables, options?: RequestInit['headers']) => fetchGraphQL<AddAdditionalItemMutation, AddAdditionalItemMutationVariables>(AddAdditionalItemDocument, variables, options);
 
 export const FilterProposalDocument = new TypedDocumentString(`
     mutation FilterProposal($proposalId: ID!, $pass: Boolean!) {
@@ -1999,3 +2045,71 @@ useNotInterestedProjectsQuery.getKey = (variables?: NotInterestedProjectsQueryVa
 
 
 useNotInterestedProjectsQuery.fetcher = (variables?: NotInterestedProjectsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<NotInterestedProjectsQuery, NotInterestedProjectsQueryVariables>(NotInterestedProjectsDocument, variables, options);
+
+export const MySolicitationsDocument = new TypedDocumentString(`
+    query MySolicitations {
+  mySolicitations {
+    ...SolicitationFields
+  }
+}
+    fragment SolicitationFields on Solicitation {
+  id
+  projectId
+  vendorId
+  invitedAt
+}`);
+
+export const useMySolicitationsQuery = <
+      TData = MySolicitationsQuery,
+      TError = unknown
+    >(
+      variables?: MySolicitationsQueryVariables,
+      options?: Omit<UseQueryOptions<MySolicitationsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<MySolicitationsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<MySolicitationsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['MySolicitations'] : ['MySolicitations', variables],
+    queryFn: fetchGraphQL<MySolicitationsQuery, MySolicitationsQueryVariables>(MySolicitationsDocument, variables),
+    ...options
+  }
+    )};
+
+useMySolicitationsQuery.getKey = (variables?: MySolicitationsQueryVariables) => variables === undefined ? ['MySolicitations'] : ['MySolicitations', variables];
+
+
+useMySolicitationsQuery.fetcher = (variables?: MySolicitationsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<MySolicitationsQuery, MySolicitationsQueryVariables>(MySolicitationsDocument, variables, options);
+
+export const SharedArtifactsDocument = new TypedDocumentString(`
+    query SharedArtifacts {
+  sharedArtifacts {
+    id
+    title
+    description
+    type
+    surveyJsSchema
+    shared
+  }
+}
+    `);
+
+export const useSharedArtifactsQuery = <
+      TData = SharedArtifactsQuery,
+      TError = unknown
+    >(
+      variables?: SharedArtifactsQueryVariables,
+      options?: Omit<UseQueryOptions<SharedArtifactsQuery, TError, TData>, 'queryKey'> & { queryKey?: UseQueryOptions<SharedArtifactsQuery, TError, TData>['queryKey'] }
+    ) => {
+    
+    return useQuery<SharedArtifactsQuery, TError, TData>(
+      {
+    queryKey: variables === undefined ? ['SharedArtifacts'] : ['SharedArtifacts', variables],
+    queryFn: fetchGraphQL<SharedArtifactsQuery, SharedArtifactsQueryVariables>(SharedArtifactsDocument, variables),
+    ...options
+  }
+    )};
+
+useSharedArtifactsQuery.getKey = (variables?: SharedArtifactsQueryVariables) => variables === undefined ? ['SharedArtifacts'] : ['SharedArtifacts', variables];
+
+
+useSharedArtifactsQuery.fetcher = (variables?: SharedArtifactsQueryVariables, options?: RequestInit['headers']) => fetchGraphQL<SharedArtifactsQuery, SharedArtifactsQueryVariables>(SharedArtifactsDocument, variables, options);
