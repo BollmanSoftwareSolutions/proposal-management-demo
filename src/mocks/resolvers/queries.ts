@@ -163,3 +163,10 @@ export function sharedArtifacts(identity: User) {
   requireVendor(identity)
   return getStore().artifactTemplates.filter((t) => t.shared)
 }
+
+export function mySharedArtifactResponses(identity: User) {
+  requireVendor(identity)
+  return getStore().sharedArtifactResponses.filter(
+    (r) => r.vendorId === identity.id,
+  )
+}

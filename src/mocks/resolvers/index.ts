@@ -2,11 +2,13 @@ import { getStore } from '../store/store'
 import type {
   AdditionalItem,
   ArtifactSubmission,
+  ArtifactTemplate,
   ArtifactType,
   Finalist,
   Project,
   ProjectArtifact,
   Proposal,
+  SharedArtifactResponse,
   Solicitation,
   User,
 } from '../store/types'
@@ -51,6 +53,14 @@ interface ArtifactInput {
   description: string
   type: ArtifactType
   surveyJsSchema?: unknown
+}
+
+interface ArtifactTemplateInput {
+  title: string
+  description: string
+  type: ArtifactType
+  surveyJsSchema?: unknown
+  shared: boolean
 }
 
 interface SubmissionInput {
@@ -166,6 +176,53 @@ export function removeProjectArtifact(identity: User, id: string) {
   throw new NotFoundError(`Artifact not found: ${id}`)
 }
 
+export function createArtifactTemplate(
+  identity: User,
+  input: ArtifactTemplateInput,
+) {
+  requireLead(identity)
+  const template: ArtifactTemplate = {
+    id: newId('tmpl'),
+    title: input.title,
+    description: input.description,
+    type: input.type,
+    surveyJsSchema: input.type === 'Form' ? input.surveyJsSchema : undefined,
+    shared: input.shared,
+  }
+  getStore().artifactTemplates.push(template)
+  return template
+}
+
+export function updateArtifactTemplate(
+  identity: User,
+  id: string,
+  input: ArtifactTemplateInput,
+) {
+  requireLead(identity)
+  const template = getStore().artifactTemplates.find((t) => t.id === id)
+  if (!template) {
+    throw new NotFoundError(`Artifact template not found: ${id}`)
+  }
+  template.title = input.title
+  template.description = input.description
+  template.type = input.type
+  template.surveyJsSchema =
+    input.type === 'Form' ? input.surveyJsSchema : undefined
+  template.shared = input.shared
+  return template
+}
+
+export function deleteArtifactTemplate(identity: User, id: string) {
+  requireLead(identity)
+  const store = getStore()
+  const index = store.artifactTemplates.findIndex((t) => t.id === id)
+  if (index === -1) {
+    throw new NotFoundError(`Artifact template not found: ${id}`)
+  }
+  store.artifactTemplates.splice(index, 1)
+  return true
+}
+
 export function solicitVendor(
   identity: User,
   projectId: string,
@@ -210,6 +267,7 @@ export function signUp(identity: User, projectId: string) {
     additionalItems: [],
   }
   store.proposals.push(proposal)
+  copySharedResponsesIntoProposal(identity.id, project, proposal)
   return proposalDTO(proposal)
 }
 
@@ -255,6 +313,103 @@ export function submitArtifact(identity: User, input: SubmissionInput) {
   )
   proposal.submissions.push(submission)
   return submission
+}
+
+/**
+ * Copy a vendor's pre-completed shared-artifact responses into a proposal's
+ * submissions. Applies to every active Form artifact whose `templateId` matches a
+ * shared template the vendor has answered and that has no submission yet.
+ */
+function copySharedResponsesIntoProposal(
+  vendorId: string,
+  project: Project,
+  proposal: Proposal,
+) {
+  const store = getStore()
+  const responses = store.sharedArtifactResponses.filter(
+    (r) => r.vendorId === vendorId,
+  )
+  if (responses.length === 0) return
+  for (const artifact of project.artifacts) {
+    if (!artifact.isActive || artifact.type !== 'Form' || !artifact.templateId) {
+      continue
+    }
+    const response = responses.find((r) => r.templateId === artifact.templateId)
+    if (!response) continue
+    const alreadySubmitted = proposal.submissions.some(
+      (s) => s.projectArtifactId === artifact.id,
+    )
+    if (alreadySubmitted) continue
+    proposal.submissions.push({
+      id: newId('submission'),
+      proposalId: proposal.id,
+      projectArtifactId: artifact.id,
+      type: 'Form',
+      surveyJsResponses: { ...response.surveyJsResponses },
+      submittedAt: new Date().toISOString(),
+    })
+  }
+}
+
+export function saveSharedArtifactResponse(
+  identity: User,
+  templateId: string,
+  surveyJsResponses: Record<string, unknown>,
+) {
+  requireVendor(identity)
+  const store = getStore()
+  const template = store.artifactTemplates.find(
+    (t) => t.id === templateId && t.shared,
+  )
+  if (!template) {
+    throw new NotFoundError(`Shared artifact not found: ${templateId}`)
+  }
+  const now = new Date().toISOString()
+  let record = store.sharedArtifactResponses.find(
+    (r) => r.vendorId === identity.id && r.templateId === templateId,
+  )
+  if (record) {
+    record.surveyJsResponses = surveyJsResponses
+    record.updatedAt = now
+  } else {
+    record = {
+      id: newId('shared-response'),
+      vendorId: identity.id,
+      templateId,
+      surveyJsResponses,
+      updatedAt: now,
+    }
+    store.sharedArtifactResponses.push(record)
+  }
+  // Propagate the saved responses into the vendor's existing proposals so a
+  // pre-completed shared artifact fills matching project artifacts immediately.
+  for (const proposal of store.proposals.filter(
+    (p) => p.vendorId === identity.id,
+  )) {
+    const project = store.projects.find((p) => p.id === proposal.projectId)
+    if (!project) continue
+    for (const artifact of project.artifacts) {
+      if (
+        !artifact.isActive ||
+        artifact.type !== 'Form' ||
+        artifact.templateId !== templateId
+      ) {
+        continue
+      }
+      proposal.submissions = proposal.submissions.filter(
+        (s) => s.projectArtifactId !== artifact.id,
+      )
+      proposal.submissions.push({
+        id: newId('submission'),
+        proposalId: proposal.id,
+        projectArtifactId: artifact.id,
+        type: 'Form',
+        surveyJsResponses: { ...surveyJsResponses },
+        submittedAt: now,
+      })
+    }
+  }
+  return record as SharedArtifactResponse
 }
 
 export function submitProposal(identity: User, proposalId: string) {

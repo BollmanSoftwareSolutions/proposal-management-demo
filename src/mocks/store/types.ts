@@ -99,6 +99,19 @@ export interface ArtifactSubmission {
   submittedAt: string
 }
 
+/**
+ * A vendor's pre-completed response to a shared artifact template. Copied into a
+ * proposal's submissions when the vendor signs up for a project that includes an
+ * artifact derived from the same template.
+ */
+export interface SharedArtifactResponse {
+  id: ID
+  vendorId: ID
+  templateId: ID
+  surveyJsResponses: Record<string, unknown>
+  updatedAt: string
+}
+
 export interface Proposal {
   id: ID
   projectId: ID
@@ -132,4 +145,5 @@ export interface DemoStore {
   proposals: Proposal[]
   finalists: Finalist[]
   notInterested: NotInterested[]
+  sharedArtifactResponses: SharedArtifactResponse[]
 }

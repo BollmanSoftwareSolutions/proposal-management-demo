@@ -20,6 +20,15 @@ fragment ProjectArtifactFields on ProjectArtifact {
   isActive
 }
 
+fragment ArtifactTemplateFields on ArtifactTemplate {
+  id
+  title
+  description
+  type
+  surveyJsSchema
+  shared
+}
+
 fragment ProjectSegmentFields on ProjectSegment {
   id
   projectId

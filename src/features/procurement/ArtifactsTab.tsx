@@ -18,6 +18,7 @@ import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import AddIcon from '@mui/icons-material/Add'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   useAddProjectArtifactMutation,
@@ -29,6 +30,13 @@ import {
 } from '../../graphql/generated/graphql'
 import { QueryState } from '../../components/common/QueryState'
 import { formatDate } from '../../lib/format'
+import { SurveyPreviewDialog } from '../survey-runtime/SurveyPreviewDialog'
+import { SurveyBuilder } from '../survey-builder/SurveyBuilder'
+import {
+  questionsToSchema,
+  schemaToQuestions,
+  type BuilderQuestion,
+} from '../survey-builder/surveySchema'
 
 type SubmissionRow = {
   vendorName: string
@@ -43,6 +51,10 @@ export function ArtifactsTab({ projectId }: { projectId: string }) {
   const templatesQuery = useArtifactTemplatesQuery()
 
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [previewArtifact, setPreviewArtifact] = useState<{
+    title: string
+    schema: unknown
+  } | null>(null)
 
   const project = projectQuery.data?.project ?? null
   const artifacts = project?.artifacts ?? []
@@ -176,14 +188,30 @@ export function ArtifactsTab({ projectId }: { projectId: string }) {
                     </Typography>
                   </Box>
                   {artifact.isActive && (
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => removeArtifact.mutate({ id: artifact.id })}
-                      disabled={removeArtifact.isPending}
-                    >
-                      Remove
-                    </Button>
+                    <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+                      {artifact.type === 'Form' && (
+                        <Button
+                          size="small"
+                          startIcon={<VisibilityIcon />}
+                          onClick={() =>
+                            setPreviewArtifact({
+                              title: artifact.title,
+                              schema: artifact.surveyJsSchema,
+                            })
+                          }
+                        >
+                          Preview
+                        </Button>
+                      )}
+                      <Button
+                        size="small"
+                        color="error"
+                        onClick={() => removeArtifact.mutate({ id: artifact.id })}
+                        disabled={removeArtifact.isPending}
+                      >
+                        Remove
+                      </Button>
+                    </Stack>
                   )}
                 </Box>
 
@@ -220,6 +248,13 @@ export function ArtifactsTab({ projectId }: { projectId: string }) {
         pending={addArtifact.isPending}
         error={addArtifact.error}
         onSubmit={(input) => addArtifact.mutate({ projectId, input })}
+      />
+
+      <SurveyPreviewDialog
+        open={previewArtifact !== null}
+        title={previewArtifact?.title ?? ''}
+        schema={previewArtifact?.schema}
+        onClose={() => setPreviewArtifact(null)}
       />
     </QueryState>
   )
@@ -258,6 +293,7 @@ function AddArtifactDialog({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [type, setType] = useState<ArtifactType>('Form')
+  const [questions, setQuestions] = useState<BuilderQuestion[]>([])
 
   const selected = templates.find((t) => t.id === templateId)
 
@@ -268,6 +304,9 @@ function AddArtifactDialog({
       setTitle(tmpl.title)
       setDescription(tmpl.description)
       setType(tmpl.type)
+      setQuestions(
+        tmpl.type === 'Form' ? schemaToQuestions(tmpl.surveyJsSchema) : [],
+      )
     }
   }
 
@@ -278,12 +317,13 @@ function AddArtifactDialog({
       title: title.trim(),
       description: description.trim(),
       type,
-      surveyJsSchema: selected?.surveyJsSchema,
+      surveyJsSchema:
+        type === 'Form' ? questionsToSchema(title.trim(), questions) : undefined,
     })
   }
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>Add project artifact</DialogTitle>
       <DialogContent>
         <Stack spacing={2.5} sx={{ mt: 1 }}>
@@ -328,6 +368,13 @@ function AddArtifactDialog({
             <MenuItem value="Form">Form</MenuItem>
             <MenuItem value="Document">Document</MenuItem>
           </TextField>
+          {type === 'Form' && (
+            <SurveyBuilder
+              questions={questions}
+              onChange={setQuestions}
+              surveyTitle={title}
+            />
+          )}
           {Boolean(error) && (
             <Alert severity="error">
               {error instanceof Error ? error.message : 'Failed to add artifact.'}

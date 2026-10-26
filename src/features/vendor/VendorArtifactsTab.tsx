@@ -22,12 +22,13 @@ import {
 } from '../../graphql/generated/graphql'
 import { formatDate } from '../../lib/format'
 import { errorMessage } from '../../lib/errors'
+import { SurveyRuntime, type SurveyResponses } from '../survey-runtime/SurveyRuntime'
 
 /**
  * Vendor artifact completion (design-docs/04-ui-ux.md §4.11). Lists the active
  * project artifacts and the vendor's submission status. Document artifacts are
- * completed by naming the uploaded document; interactive form completion via the
- * SurveyJS runtime arrives in Phase 6.
+ * completed by naming the uploaded document; Form artifacts open the SurveyJS
+ * runtime so the vendor can fill and submit responses.
  */
 export function VendorArtifactsTab({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
@@ -58,12 +59,15 @@ export function VendorArtifactsTab({ projectId }: { projectId: string }) {
   const [dialogArtifact, setDialogArtifact] =
     useState<ProjectArtifactFieldsFragment | null>(null)
   const [documentName, setDocumentName] = useState('')
+  const [formArtifact, setFormArtifact] =
+    useState<ProjectArtifactFieldsFragment | null>(null)
 
   const submitArtifact = useSubmitArtifactMutation({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: useMyProposalsQuery.getKey() })
       setDialogArtifact(null)
       setDocumentName('')
+      setFormArtifact(null)
     },
   })
 
@@ -172,22 +176,15 @@ export function VendorArtifactsTab({ projectId }: { projectId: string }) {
                         {submission ? 'Update document' : 'Add document'}
                       </Button>
                     ) : (
-                      <Button variant="outlined" disabled>
-                        Complete form
+                      <Button
+                        variant={submission ? 'outlined' : 'contained'}
+                        onClick={() => setFormArtifact(artifact)}
+                      >
+                        {submission ? 'Edit responses' : 'Complete form'}
                       </Button>
                     )}
                   </Box>
                 </Stack>
-                {artifact.type === 'Form' && !submission && (
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ display: 'block', mt: 1 }}
-                  >
-                    Interactive form completion opens with the SurveyJS runtime
-                    in Phase 6.
-                  </Typography>
-                )}
               </Paper>
             )
           })}
@@ -240,6 +237,53 @@ export function VendorArtifactsTab({ projectId }: { projectId: string }) {
           >
             Save
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(formArtifact)}
+        onClose={() => setFormArtifact(null)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>{formArtifact?.title}</DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Complete this form and submit. Your responses are saved to this
+            proposal.
+          </Typography>
+          {formArtifact && (
+            <SurveyRuntime
+              schema={formArtifact.surveyJsSchema}
+              mode="edit"
+              initialData={
+                (submissionByArtifact.get(formArtifact.id)
+                  ?.surveyJsResponses as SurveyResponses | undefined) ?? null
+              }
+              onComplete={(responses) => {
+                if (!formArtifact || !proposal) return
+                submitArtifact.mutate({
+                  input: {
+                    proposalId: proposal.id,
+                    projectArtifactId: formArtifact.id,
+                    type: 'Form',
+                    surveyJsResponses: responses,
+                  },
+                })
+              }}
+            />
+          )}
+          {submitArtifact.error != null && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {errorMessage(
+                submitArtifact.error,
+                'Could not save the submission.',
+              )}
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFormArtifact(null)}>Close</Button>
         </DialogActions>
       </Dialog>
     </QueryState>

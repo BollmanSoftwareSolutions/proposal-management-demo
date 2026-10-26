@@ -123,6 +123,14 @@ type ArtifactSubmission {
   submittedAt: String!
 }
 
+type SharedArtifactResponse {
+  id: ID!
+  vendorId: ID!
+  templateId: ID!
+  surveyJsResponses: JSON!
+  updatedAt: String!
+}
+
 type Proposal {
   id: ID!
   projectId: ID!
@@ -221,6 +229,14 @@ input ArtifactInput {
   surveyJsSchema: JSON
 }
 
+input ArtifactTemplateInput {
+  title: String!
+  description: String!
+  type: ArtifactType!
+  surveyJsSchema: JSON
+  shared: Boolean!
+}
+
 input SubmissionInput {
   proposalId: ID!
   projectArtifactId: ID!
@@ -255,6 +271,7 @@ type Query {
   notInterestedProjects: [Project!]!
   mySolicitations: [Solicitation!]!
   sharedArtifacts: [ArtifactTemplate!]!
+  mySharedArtifactResponses: [SharedArtifactResponse!]!
 }
 
 type Mutation {
@@ -263,12 +280,22 @@ type Mutation {
   activateProject(id: ID!): Project!
   addProjectArtifact(projectId: ID!, input: ArtifactInput!): ProjectArtifact!
   removeProjectArtifact(id: ID!): ProjectArtifact!
+  createArtifactTemplate(input: ArtifactTemplateInput!): ArtifactTemplate!
+  updateArtifactTemplate(
+    id: ID!
+    input: ArtifactTemplateInput!
+  ): ArtifactTemplate!
+  deleteArtifactTemplate(id: ID!): Boolean!
   solicitVendor(projectId: ID!, vendorId: ID!): Solicitation!
 
   signUp(projectId: ID!): Proposal!
   markNotInterested(projectId: ID!): Boolean!
   reconsiderProject(projectId: ID!): Boolean!
   submitArtifact(input: SubmissionInput!): ArtifactSubmission!
+  saveSharedArtifactResponse(
+    templateId: ID!
+    surveyJsResponses: JSON!
+  ): SharedArtifactResponse!
   submitProposal(proposalId: ID!): Proposal!
   addAdditionalItem(proposalId: ID!, name: String!, note: String): AdditionalItem!
   updateDemographics(input: DemographicsInput!): User!
