@@ -107,6 +107,17 @@ describe('Procurement features (Phase 3)', () => {
     ).toBeInTheDocument()
   })
 
+  it('shows a not-found message for an unknown project id', async () => {
+    renderApp({
+      initialPath: '/projects/project-does-not-exist/setup',
+      initialIdentityId: 'user-lead',
+    })
+
+    expect(
+      await screen.findByText(/Project not found/i),
+    ).toBeInTheDocument()
+  })
+
   it('lists vendors with their activity for procurement', async () => {
     renderApp({ initialPath: '/vendors', initialIdentityId: 'user-lead' })
 
